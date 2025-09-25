@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% block title %}Broken Link Checker{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-xl mb-4">
+                <span class="text-2xl">🔗</span>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent mb-2">Broken Link Checker</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Find and fix broken links on your website</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <form id="linkForm">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Website URL</label>
+                    <input type="url" name="url" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="https://example.com">
+                </div>
+                <div class="mt-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="check_external" class="rounded border-gray-300 text-red-600 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-600">Also check external links (slower but more comprehensive)</span>
+                    </label>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gradient-to-r from-red-600 to-orange-600 text-white py-3 rounded-lg hover:shadow-lg transition-all">Check for Broken Links</button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden space-y-8">
+            <!-- Overview Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-blue-600" id="totalLinks">0</div>
+                    <div class="text-gray-600">Total Links</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-green-600" id="workingLinks">0</div>
+                    <div class="text-gray-600">Working Links</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-red-600" id="brokenLinks">0</div>
+                    <div class="text-gray-600">Broken Links</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-orange-600" id="externalLinks">0</div>
+                    <div class="text-gray-600">External Links</div>
+                </div>
+            </div>
+
+            <!-- Health Score -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Link Health Score</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-lg font-medium text-gray-700">Overall Health</span>
+                    <span id="healthScore" class="text-2xl font-bold text-green-600">100%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="healthBar" class="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-300" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <!-- Broken Links Details -->
+            <div id="brokenLinksSection" class="bg-white rounded-2xl shadow-xl p-8 hidden">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-red-600">Broken Links Found</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Code</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="brokenLinksTable" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="bg-blue-50 rounded-2xl p-8 border border-blue-200">
+                <h3 class="text-xl font-bold text-blue-800 mb-4">💡 Recommendations</h3>
+                <ul id="recommendationsList" class="space-y-2 text-blue-700">
+                </ul>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingSection" class="hidden text-center py-12">
+            <div class="inline-flex items-center justify-center w-12 h-12 border-4 border-red-200 border-t-red-600 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Checking links...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorSection" class="hidden bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+            <div class="text-red-600 text-lg font-medium mb-2">Check Failed</div>
+            <p class="text-red-600" id="errorMessage"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('linkForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Show loading, hide others
+    document.getElementById('loadingSection').classList.remove('hidden');
+    document.getElementById('resultsSection').classList.add('hidden');
+    document.getElementById('errorSection').classList.add('hidden');
+    
+    try {
+        const response = await fetch('/tools/broken-links', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        document.getElementById('loadingSection').classList.add('hidden');
+        
+        if (data.success) {
+            displayResults(data);
+        } else {
+            showError(data.error || 'Check failed');
+        }
+    } catch (error) {
+        document.getElementById('loadingSection').classList.add('hidden');
+        showError('Network error occurred');
+    }
+});
+
+function displayResults(data) {
+    document.getElementById('totalLinks').textContent = data.total_links.toLocaleString();
+    document.getElementById('workingLinks').textContent = data.working_count.toLocaleString();
+    document.getElementById('brokenLinks').textContent = data.broken_count.toLocaleString();
+    document.getElementById('externalLinks').textContent = data.external_links.toLocaleString();
+    
+    // Calculate health score
+    const healthScore = data.total_links > 0 ? Math.round((data.working_count / data.total_links) * 100) : 100;
+    document.getElementById('healthScore').textContent = healthScore + '%';
+    
+    // Update health bar color and width
+    const healthBar = document.getElementById('healthBar');
+    healthBar.style.width = healthScore + '%';
+    
+    if (healthScore >= 95) {
+        healthBar.className = 'bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-300';
+        document.getElementById('healthScore').className = 'text-2xl font-bold text-green-600';
+    } else if (healthScore >= 80) {
+        healthBar.className = 'bg-gradient-to-r from-yellow-400 to-yellow-600 h-3 rounded-full transition-all duration-300';
+        document.getElementById('healthScore').className = 'text-2xl font-bold text-yellow-600';
+    } else {
+        healthBar.className = 'bg-gradient-to-r from-red-400 to-red-600 h-3 rounded-full transition-all duration-300';
+        document.getElementById('healthScore').className = 'text-2xl font-bold text-red-600';
+    }
+    
+    // Show broken links if any
+    if (data.broken_links && data.broken_links.length > 0) {
+        const tableBody = document.getElementById('brokenLinksTable');
+        tableBody.innerHTML = '';
+        
+        data.broken_links.forEach(link => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-6 py-4 text-sm text-gray-900 break-all">${link.url}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                        ${link.status_code}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${link.type === 'internal' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+                        ${link.type}
+                    </span>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+        document.getElementById('brokenLinksSection').classList.remove('hidden');
+    }
+    
+    // Generate recommendations
+    const recommendations = [];
+    if (data.broken_count > 0) {
+        recommendations.push(`Fix ${data.broken_count} broken links to improve user experience and SEO`);
+    }
+    if (healthScore < 95) {
+        recommendations.push('Regularly monitor your links to maintain website health');
+    }
+    if (data.external_links > data.internal_links * 2) {
+        recommendations.push('Consider adding more internal links to improve site structure');
+    }
+    if (recommendations.length === 0) {
+        recommendations.push('Great job! All your links are working properly 🎉');
+    }
+    
+    const recommendationsList = document.getElementById('recommendationsList');
+    recommendationsList.innerHTML = '';
+    recommendations.forEach(rec => {
+        const li = document.createElement('li');
+        li.textContent = rec;
+        recommendationsList.appendChild(li);
+    });
+    
+    document.getElementById('resultsSection').classList.remove('hidden');
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('errorSection').classList.remove('hidden');
+}
+</script>
+{% endblock %}

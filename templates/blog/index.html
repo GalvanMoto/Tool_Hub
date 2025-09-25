@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}Blog - ToolHub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">ToolHub Blog</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Tips, tutorials, and insights to help you make the most of our productivity tools.
+            </p>
+        </div>
+
+        <!-- Featured Post -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-12">
+            <div class="md:flex">
+                <div class="md:w-1/2">
+                    <div class="h-64 md:h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <div class="text-6xl mb-4">🚀</div>
+                            <h3 class="text-2xl font-bold">Featured</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2 p-8">
+                    <div class="mb-4">
+                        <span class="inline-block bg-indigo-100 text-indigo-800 text-sm px-3 py-1 rounded-full">
+                            SEO Tips
+                        </span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                        10 Essential SEO Tools Every Marketer Should Know
+                    </h2>
+                    <p class="text-gray-600 mb-6">
+                        Discover the most powerful SEO tools that can help you improve your website's search engine rankings 
+                        and drive more organic traffic. From keyword research to technical audits, we cover it all.
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span>September 25, 2025</span>
+                            <span class="mx-2">•</span>
+                            <span>5 min read</span>
+                        </div>
+                        <a href="#" class="text-indigo-600 hover:text-indigo-700 font-semibold">
+                            Read More →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blog Posts Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Post 1 -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-blue-500 to-teal-600 flex items-center justify-center">
+                    <div class="text-white text-center">
+                        <div class="text-4xl mb-2">📊</div>
+                        <span class="font-semibold">Analytics</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-3">
+                        <span class="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+                            Analytics
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">
+                        Getting Started with Google Analytics
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Learn how to set up and use Google Analytics to track your website performance and user behavior.
+                    </p>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Sep 20, 2025</span>
+                        <a href="#" class="text-blue-600 hover:text-blue-700 font-semibold">Read →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post 2 -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center">
+                    <div class="text-white text-center">
+                        <div class="text-4xl mb-2">⚡</div>
+                        <span class="font-semibold">Performance</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-3">
+                        <span class="inline-block bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full">
+                            Performance
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">
+                        Website Speed Optimization Guide
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Discover proven techniques to make your website load faster and improve user experience.
+                    </p>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Sep 18, 2025</span>
+                        <a href="#" class="text-green-600 hover:text-green-700 font-semibold">Read →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post 3 -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                    <div class="text-white text-center">
+                        <div class="text-4xl mb-2">🎨</div>
+                        <span class="font-semibold">Design</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-3">
+                        <span class="inline-block bg-purple-100 text-purple-800 text-sm px-3 py-1 rounded-full">
+                            Design
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">
+                        Creating Effective QR Codes
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Best practices for designing QR codes that are both functional and visually appealing.
+                    </p>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Sep 15, 2025</span>
+                        <a href="#" class="text-purple-600 hover:text-purple-700 font-semibold">Read →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post 4 -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+                    <div class="text-white text-center">
+                        <div class="text-4xl mb-2">🔍</div>
+                        <span class="font-semibold">Research</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-3">
+                        <span class="inline-block bg-orange-100 text-orange-800 text-sm px-3 py-1 rounded-full">
+                            Keywords
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">
+                        Mastering Keyword Research
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Step-by-step guide to finding profitable keywords for your SEO and content strategy.
+                    </p>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Sep 12, 2025</span>
+                        <a href="#" class="text-orange-600 hover:text-orange-700 font-semibold">Read →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post 5 -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-teal-500 to-green-600 flex items-center justify-center">
+                    <div class="text-white text-center">
+                        <div class="text-4xl mb-2">📄</div>
+                        <span class="font-semibold">Documents</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-3">
+                        <span class="inline-block bg-teal-100 text-teal-800 text-sm px-3 py-1 rounded-full">
+                            PDF Tools
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">
+                        PDF Productivity Hacks
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Tips and tricks for working with PDF files more efficiently using our toolkit.
+                    </p>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Sep 10, 2025</span>
+                        <a href="#" class="text-teal-600 hover:text-teal-700 font-semibold">Read →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post 6 -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
+                    <div class="text-white text-center">
+                        <div class="text-4xl mb-2">🛡️</div>
+                        <span class="font-semibold">Security</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-3">
+                        <span class="inline-block bg-indigo-100 text-indigo-800 text-sm px-3 py-1 rounded-full">
+                            Security
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">
+                        Online Privacy & Security
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        How to protect your data and maintain privacy while using online productivity tools.
+                    </p>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">Sep 8, 2025</span>
+                        <a href="#" class="text-indigo-600 hover:text-indigo-700 font-semibold">Read →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-12 mt-16 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Stay Updated</h2>
+            <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+                Subscribe to our newsletter to get the latest tips, tutorials, and updates delivered to your inbox.
+            </p>
+            <div class="max-w-md mx-auto">
+                <form class="flex gap-3">
+                    <input type="email" placeholder="Enter your email"
+                           class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <button type="submit"
+                            class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

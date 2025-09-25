@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}SERP Tracking{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-xl mb-4">
+                <span class="text-2xl">📈</span>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent mb-2">SERP Tracking</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Track your keyword rankings across search engines in real-time</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <form id="serpForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Keyword</label>
+                        <input type="text" name="keyword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Domain</label>
+                        <input type="text" name="domain" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gradient-to-r from-yellow-600 to-orange-600 text-white py-3 rounded-lg">Track Rankings</button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden space-y-8">
+            <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Ranking Results</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Keyword:</span>
+                            <span class="font-semibold" id="keyword">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Current Position:</span>
+                            <span class="font-semibold text-blue-600" id="currentPosition">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Previous Position:</span>
+                            <span class="font-semibold" id="previousPosition">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Change:</span>
+                            <span class="font-semibold" id="change">-</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Search Volume:</span>
+                            <span class="font-semibold" id="searchVolume">-</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Top Competitors:</h4>
+                            <div id="topCompetitors" class="space-y-1">
+                                <!-- Competitors will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('serpForm');
+    const resultsSection = document.getElementById('resultsSection');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch('{{ url_for("tools.serp_tracking") }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                displayResults(data);
+                resultsSection.classList.remove('hidden');
+            } else {
+                throw new Error(data.error || 'Analysis failed');
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
+
+    function displayResults(data) {
+        document.getElementById('keyword').textContent = data.keyword || '-';
+        document.getElementById('currentPosition').textContent = data.current_position || '-';
+        document.getElementById('previousPosition').textContent = data.previous_position || '-';
+        
+        const change = data.change || 0;
+        const changeElement = document.getElementById('change');
+        changeElement.textContent = (change > 0 ? '+' : '') + change;
+        changeElement.className = `font-semibold ${change > 0 ? 'text-red-600' : change < 0 ? 'text-green-600' : 'text-gray-600'}`;
+        
+        document.getElementById('searchVolume').textContent = (data.search_volume || 0).toLocaleString();
+
+        // Populate competitors
+        const competitorsContainer = document.getElementById('topCompetitors');
+        competitorsContainer.innerHTML = '';
+        if (data.top_competitors && data.top_competitors.length > 0) {
+            data.top_competitors.forEach(comp => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between text-sm';
+                div.innerHTML = `
+                    <span>${comp.domain}</span>
+                    <span class="text-gray-500">#${comp.position}</span>
+                `;
+                competitorsContainer.appendChild(div);
+            });
+        }
+    }
+});
+</script>
+{% endblock %}

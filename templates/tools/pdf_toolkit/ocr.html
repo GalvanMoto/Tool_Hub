@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF OCR - ToolHub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('main.index') }}" class="text-blue-600 hover:text-blue-800 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">PDF OCR</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Feature Description -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="text-center">
+                <div class="w-16 h-16 mx-auto bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Extract Text with OCR</h2>
+                <p class="text-gray-600">Convert scanned PDFs and images into searchable, selectable text using Optical Character Recognition</p>
+            </div>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <form id="ocrForm" enctype="multipart/form-data" class="space-y-6">
+                <!-- File Upload -->
+                <div>
+                    <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-2">
+                        Select PDF File (Scanned or Image-based)
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                        <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" required class="hidden">
+                        <div id="dropArea" class="cursor-pointer">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-600">
+                                <span class="font-medium text-blue-600">Click to upload</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">Scanned PDF files or image-based PDFs</p>
+                        </div>
+                        <div id="fileName" class="mt-2 text-sm text-gray-600 hidden"></div>
+                    </div>
+                </div>
+
+                <!-- OCR Options -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900">OCR Options</h3>
+                    
+                    <!-- Language Selection -->
+                    <div>
+                        <label for="language" class="block text-sm font-medium text-gray-700 mb-2">
+                            Text Language
+                        </label>
+                        <select id="language" name="language" 
+                                class="w-full px-3 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="eng">English</option>
+                            <option value="spa">Spanish</option>
+                            <option value="fra">French</option>
+                            <option value="deu">German</option>
+                            <option value="ita">Italian</option>
+                            <option value="por">Portuguese</option>
+                            <option value="rus">Russian</option>
+                            <option value="chi_sim">Chinese (Simplified)</option>
+                            <option value="chi_tra">Chinese (Traditional)</option>
+                            <option value="jpn">Japanese</option>
+                            <option value="kor">Korean</option>
+                            <option value="ara">Arabic</option>
+                        </select>
+                    </div>
+
+                    <!-- Output Format -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Output Format</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="output_format" value="searchable_pdf" checked class="mr-3">
+                                <div>
+                                    <span class="font-medium">Searchable PDF</span>
+                                    <p class="text-sm text-gray-500">Create a PDF with selectable and searchable text</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="output_format" value="text_file" class="mr-3">
+                                <div>
+                                    <span class="font-medium">Text File</span>
+                                    <p class="text-sm text-gray-500">Extract text to a plain text file</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Quality Settings -->
+                    <div>
+                        <label for="quality" class="block text-sm font-medium text-gray-700 mb-2">
+                            OCR Quality vs Speed
+                        </label>
+                        <select id="quality" name="quality" 
+                                class="w-full px-3 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="fast">Fast (Lower accuracy, quicker processing)</option>
+                            <option value="balanced" selected>Balanced (Good accuracy and speed)</option>
+                            <option value="accurate">Accurate (Higher accuracy, slower processing)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Processing Notice -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-medium text-blue-800">Processing Information</h4>
+                            <p class="text-sm text-blue-700 mt-1">
+                                OCR processing may take several minutes depending on file size and quality settings. The accuracy depends on the quality of the scanned images.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end">
+                    <button type="submit" id="ocrBtn" 
+                            class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 font-medium transition-colors">
+                        <span id="ocrText">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Start OCR Processing
+                        </span>
+                        <span id="ocrLoading" class="hidden">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing OCR...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Features List -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                <div class="w-12 h-12 mx-auto bg-indigo-100 rounded-full flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">Searchable PDFs</h3>
+                <p class="text-sm text-gray-600">Make scanned documents searchable and selectable</p>
+            </div>
+            <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                <div class="w-12 h-12 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">Multi-Language</h3>
+                <p class="text-sm text-gray-600">Support for 12+ languages including English, Spanish, Chinese</p>
+            </div>
+            <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                <div class="w-12 h-12 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">Quality Options</h3>
+                <p class="text-sm text-gray-600">Choose between speed and accuracy based on your needs</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// File upload handling
+const fileInput = document.getElementById('pdf_file');
+const dropArea = document.getElementById('dropArea');
+const fileName = document.getElementById('fileName');
+
+dropArea.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        fileName.textContent = e.target.files[0].name;
+        fileName.classList.remove('hidden');
+    }
+});
+
+// Form submission
+document.getElementById('ocrForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const ocrBtn = document.getElementById('ocrBtn');
+    const ocrText = document.getElementById('ocrText');
+    const ocrLoading = document.getElementById('ocrLoading');
+    
+    // Show loading state
+    ocrText.classList.add('hidden');
+    ocrLoading.classList.remove('hidden');
+    ocrBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/tools/pdf/ocr', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            // Set filename based on output format
+            const outputFormat = formData.get('output_format');
+            const extension = outputFormat === 'text_file' ? '.txt' : '.pdf';
+            a.download = `ocr_result${extension}`;
+            
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + (error.error || 'Failed to process OCR'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while processing OCR');
+    } finally {
+        // Reset button state
+        ocrText.classList.remove('hidden');
+        ocrLoading.classList.add('hidden');
+        ocrBtn.disabled = false;
+    }
+});
+
+// Drag and drop
+dropArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropArea.classList.add('border-blue-500');
+});
+
+dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('border-blue-500');
+});
+
+dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.classList.remove('border-blue-500');
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type === 'application/pdf') {
+        fileInput.files = files;
+        fileName.textContent = files[0].name;
+        fileName.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %}

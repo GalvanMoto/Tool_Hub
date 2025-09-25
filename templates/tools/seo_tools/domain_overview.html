@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Domain Overview{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-xl mb-4">
+                <span class="text-2xl">🌐</span>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+                Domain Overview
+            </h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Get comprehensive domain metrics including authority and trust scores
+            </p>
+        </div>
+
+        <!-- Input Form -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
+            <form id="domainForm" class="space-y-6">
+                <div>
+                    <label for="domain" class="block text-sm font-medium text-gray-700 mb-2">
+                        Domain <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" 
+                           id="domain" 
+                           name="domain" 
+                           required
+                           placeholder="example.com"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-cyan-700 transition-all duration-300">
+                    Analyze Domain
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden space-y-8">
+            <!-- Domain Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-indigo-600" id="domainAuthority">0</div>
+                    <div class="text-gray-600">Domain Authority</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-blue-600" id="pageAuthority">0</div>
+                    <div class="text-gray-600">Page Authority</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-green-600" id="trustFlow">0</div>
+                    <div class="text-gray-600">Trust Flow</div>
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Domain Details</h3>
+                <div id="domainDetails" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('domainForm');
+    const resultsSection = document.getElementById('resultsSection');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch('{{ url_for("tools.domain_overview") }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                displayResults(data);
+                resultsSection.classList.remove('hidden');
+            } else {
+                throw new Error(data.error || 'Analysis failed');
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
+
+    function displayResults(data) {
+        document.getElementById('domainAuthority').textContent = data.domain_authority;
+        document.getElementById('pageAuthority').textContent = data.page_authority;
+        document.getElementById('trustFlow').textContent = data.trust_flow;
+
+        const details = document.getElementById('domainDetails');
+        details.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Total Backlinks:</span>
+                    <span class="font-semibold">${data.total_backlinks.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Referring Domains:</span>
+                    <span class="font-semibold">${data.referring_domains.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Organic Keywords:</span>
+                    <span class="font-semibold">${data.organic_keywords.toLocaleString()}</span>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Monthly Traffic:</span>
+                    <span class="font-semibold">${data.monthly_traffic.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Traffic Value:</span>
+                    <span class="font-semibold">$${data.traffic_value.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Domain Age:</span>
+                    <span class="font-semibold">${data.domain_age} years</span>
+                </div>
+            </div>
+        `;
+    }
+});
+</script>
+{% endblock %}

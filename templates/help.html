@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Help Center - ToolHub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Help Center</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Find answers to common questions and learn how to make the most of ToolHub.
+            </p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="max-w-2xl mx-auto mb-16">
+            <div class="relative">
+                <input type="text" placeholder="Search for help articles..."
+                       class="w-full px-6 py-4 text-lg border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent pl-14">
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Topics -->
+        <div class="grid md:grid-cols-3 gap-8 mb-16">
+            <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+                <div class="text-4xl mb-4">🚀</div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Getting Started</h3>
+                <p class="text-gray-600 mb-4">Learn the basics of using ToolHub and its features.</p>
+                <a href="#getting-started" class="text-indigo-600 hover:text-indigo-700 font-semibold">
+                    View Articles →
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+                <div class="text-4xl mb-4">🛠️</div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Tools & Features</h3>
+                <p class="text-gray-600 mb-4">Detailed guides for each tool and feature.</p>
+                <a href="#tools-features" class="text-indigo-600 hover:text-indigo-700 font-semibold">
+                    View Guides →
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+                <div class="text-4xl mb-4">🔧</div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Troubleshooting</h3>
+                <p class="text-gray-600 mb-4">Solutions to common problems and issues.</p>
+                <a href="#troubleshooting" class="text-indigo-600 hover:text-indigo-700 font-semibold">
+                    Get Help →
+                </a>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
+            
+            <div class="space-y-6">
+                <div class="border-b border-gray-200 pb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">How do I get started with ToolHub?</h4>
+                    <p class="text-gray-600">
+                        Simply visit our tools page and start using any of our free tools. No registration required for basic features. 
+                        For advanced features like Google Analytics integration, you can sign up with your Google account.
+                    </p>
+                </div>
+                
+                <div class="border-b border-gray-200 pb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Is my data secure when using ToolHub?</h4>
+                    <p class="text-gray-600">
+                        Yes, we take security seriously. Files are processed securely and automatically deleted within 24 hours. 
+                        We don't store your files permanently, and all data transmission is encrypted.
+                    </p>
+                </div>
+                
+                <div class="border-b border-gray-200 pb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">What file formats do you support?</h4>
+                    <p class="text-gray-600">
+                        We support a wide range of file formats including PDF, DOC, DOCX, JPG, PNG, GIF, MP4, and many more. 
+                        Each tool displays the supported formats on its respective page.
+                    </p>
+                </div>
+                
+                <div class="border-b border-gray-200 pb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">How do I connect Google Analytics?</h4>
+                    <p class="text-gray-600">
+                        Click "Sign in with Google" and grant permission to access your Analytics data. 
+                        This allows our SEO tools to provide real insights about your website's performance.
+                    </p>
+                </div>
+                
+                <div class="border-b border-gray-200 pb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">What's the difference between free and pro plans?</h4>
+                    <p class="text-gray-600">
+                        Free users get access to basic tools with usage limits. Pro users enjoy unlimited usage, 
+                        advanced SEO features, Google Analytics integration, and priority support.
+                    </p>
+                </div>
+                
+                <div class="border-b border-gray-200 pb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Can I use ToolHub for commercial purposes?</h4>
+                    <p class="text-gray-600">
+                        Yes! All our plans, including the free tier, allow commercial use. 
+                        For heavy commercial usage, we recommend upgrading to our Pro or Enterprise plans.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">How do I report a bug or request a feature?</h4>
+                    <p class="text-gray-600">
+                        You can contact us through our contact page or email support@toolhub.com. 
+                        We appreciate feedback and actively work on user-requested features.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="text-center mt-16">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Still need help?</h2>
+            <p class="text-gray-600 mb-8">Can't find what you're looking for? Our support team is here to help.</p>
+            <a href="{{ url_for('main.contact') }}" 
+               class="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold">
+                Contact Support
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

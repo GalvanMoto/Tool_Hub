@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Tools - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Productivity Tools</h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover our collection of powerful tools designed to boost your productivity.
+            All tools are free to use and work directly in your browser.
+        </p>
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for tool in tools %}
+        <div class="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+            <div class="p-6">
+                <div class="text-4xl mb-4">{{ tool.icon }}</div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ tool.name }}</h3>
+                <p class="text-gray-600 mb-4">{{ tool.description }}</p>
+                <a href="{{ tool.url }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium">
+                    Try Now
+                    <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="bg-gray-50 px-6 py-3">
+                <span class="text-sm text-green-600 font-medium">✓ Free to use</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Coming Soon -->
+    <div class="mt-16">
+        <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Coming Soon</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-gray-100 rounded-lg p-6 text-center opacity-75">
+                <div class="text-3xl mb-3">📊</div>
+                <h3 class="font-semibold text-gray-700">Excel Converter</h3>
+                <p class="text-sm text-gray-500 mt-2">Convert CSV to Excel and vice versa</p>
+            </div>
+            <div class="bg-gray-100 rounded-lg p-6 text-center opacity-75">
+                <div class="text-3xl mb-3">🔗</div>
+                <h3 class="font-semibold text-gray-700">URL Shortener</h3>
+                <p class="text-sm text-gray-500 mt-2">Create short, shareable links</p>
+            </div>
+            <div class="bg-gray-100 rounded-lg p-6 text-center opacity-75">
+                <div class="text-3xl mb-3">🎨</div>
+                <h3 class="font-semibold text-gray-700">Color Palette</h3>
+                <p class="text-sm text-gray-500 mt-2">Generate beautiful color schemes</p>
+            </div>
+            <div class="bg-gray-100 rounded-lg p-6 text-center opacity-75">
+                <div class="text-3xl mb-3">📝</div>
+                <h3 class="font-semibold text-gray-700">Text Formatter</h3>
+                <p class="text-sm text-gray-500 mt-2">Format and transform text easily</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="mt-16 bg-indigo-600 rounded-lg p-8 text-center text-white">
+        <h2 class="text-2xl font-bold mb-4">Need a Custom Tool?</h2>
+        <p class="mb-6">Let us know what productivity tool you'd like to see next!</p>
+        <a href="/contact" class="bg-white text-indigo-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium inline-block">
+            Request a Tool
+        </a>
+    </div>
+</div>
+{% endblock %}

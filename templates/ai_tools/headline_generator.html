@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Headline Generator - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            AI Headline Generator
+            <span class="text-2xl">📰</span>
+        </h1>
+        <p class="text-xl text-gray-600">
+            Generate compelling headlines that drive clicks and engagement
+        </p>
+    </div>
+
+    <!-- Usage Counter -->
+    {% if current_user.is_authenticated %}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            {% if current_user.is_premium() %}
+                <p class="text-blue-800 font-medium">✨ Premium User - Unlimited Access</p>
+            {% else %}
+                <p class="text-blue-800 font-medium">📊 Daily Usage: Checking...</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Headline Generator Form -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <form id="headlineForm" class="space-y-6">
+            <!-- Topic Input -->
+            <div>
+                <label for="topic" class="block text-sm font-medium text-gray-700 mb-2">
+                    Topic or Content Description *
+                </label>
+                <textarea id="topic" 
+                         name="topic" 
+                         required
+                         rows="3"
+                         placeholder="Describe your content, article, or the main topic you want headlines for..."
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"></textarea>
+            </div>
+
+            <!-- Headline Type -->
+            <div>
+                <label for="headline_type" class="block text-sm font-medium text-gray-700 mb-2">
+                    Headline Style
+                </label>
+                <select id="headline_type" 
+                        name="headline_type"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <option value="engaging">Engaging & Clickable</option>
+                    <option value="informative">Informative & Clear</option>
+                    <option value="curiosity">Curiosity-Driven</option>
+                    <option value="urgent">Urgent & Action-Oriented</option>
+                    <option value="listicle">List-Based (Numbers)</option>
+                    <option value="question">Question-Based</option>
+                    <option value="howto">How-To Guide</option>
+                </select>
+            </div>
+
+            <!-- Target Audience -->
+            <div>
+                <label for="audience" class="block text-sm font-medium text-gray-700 mb-2">
+                    Target Audience (Optional)
+                </label>
+                <input type="text" 
+                       id="audience" 
+                       name="audience" 
+                       placeholder="e.g., Small business owners, Tech enthusiasts, Parents"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Keywords -->
+            <div>
+                <label for="keywords" class="block text-sm font-medium text-gray-700 mb-2">
+                    Keywords to Include (Optional)
+                </label>
+                <input type="text" 
+                       id="keywords" 
+                       name="keywords" 
+                       placeholder="e.g., AI, productivity, marketing"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Number of Headlines -->
+            <div>
+                <label for="count" class="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Headlines
+                </label>
+                <select id="count" 
+                        name="count"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <option value="5">5 Headlines</option>
+                    <option value="10" selected>10 Headlines</option>
+                    <option value="15">15 Headlines</option>
+                    <option value="20">20 Headlines</option>
+                </select>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" 
+                    id="generateBtn"
+                    class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>✨</span>
+                <span>Generate Headlines</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="hidden bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="text-orange-600 mr-2">📰</span>
+            Generated Headlines
+        </h2>
+        
+        <!-- Headlines List -->
+        <div id="headlinesList" class="space-y-4 mb-6"></div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="copyAllHeadlines()" 
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>📋</span>
+                <span>Copy All Headlines</span>
+            </button>
+            <button onclick="generateMore()" 
+                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🔄</span>
+                <span>Generate More</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+        <p class="mt-4 text-gray-600">Generating compelling headlines...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <h3 class="text-lg font-semibold text-red-800 mb-2">Error</h3>
+        <p class="text-red-600" id="errorMessage"></p>
+        <button onclick="generateMore()" 
+                class="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            Try Again
+        </button>
+    </div>
+</div>
+
+<script>
+let currentHeadlines = [];
+
+// Form submission
+document.getElementById('headlineForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const topic = document.getElementById('topic').value.trim();
+    const headlineType = document.getElementById('headline_type').value;
+    const audience = document.getElementById('audience').value.trim();
+    const keywords = document.getElementById('keywords').value.trim();
+    const count = document.getElementById('count').value;
+    
+    if (!topic) {
+        alert('Please enter a topic or content description.');
+        return;
+    }
+
+    // Show loading, hide other sections
+    document.getElementById('loading').classList.remove('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+
+    try {
+        const response = await fetch('{{ url_for("ai_tools.ai_generate") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tool_type: 'headline_generator',
+                topic: topic,
+                headline_type: headlineType,
+                audience: audience,
+                keywords: keywords,
+                count: parseInt(count)
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayResults(data.result);
+        } else {
+            showError(data.error || 'Failed to generate headlines');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Network error. Please try again.');
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
+    }
+});
+
+function displayResults(result) {
+    // Parse headlines from result
+    let headlines = [];
+    if (typeof result === 'string') {
+        headlines = result.split('\n').filter(line => line.trim()).map(line => line.replace(/^\d+\.\s*/, ''));
+    } else if (Array.isArray(result)) {
+        headlines = result;
+    } else if (result.headlines) {
+        headlines = result.headlines;
+    }
+    
+    currentHeadlines = headlines;
+    
+    const headlinesList = document.getElementById('headlinesList');
+    headlinesList.innerHTML = '';
+    
+    headlines.forEach((headline, index) => {
+        const headlineDiv = document.createElement('div');
+        headlineDiv.className = 'group bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 transition-colors';
+        headlineDiv.innerHTML = `
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-start space-x-3">
+                        <span class="bg-orange-100 text-orange-600 text-sm font-medium px-2 py-1 rounded-full">${index + 1}</span>
+                        <p class="text-gray-800 font-medium leading-relaxed">${headline.trim()}</p>
+                    </div>
+                </div>
+                <button onclick="copyHeadline('${headline.replace(/'/g, "\\'")}', ${index})" 
+                        class="opacity-0 group-hover:opacity-100 ml-3 text-gray-400 hover:text-gray-600 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                </button>
+            </div>
+        `;
+        headlinesList.appendChild(headlineDiv);
+    });
+    
+    document.getElementById('results').classList.remove('hidden');
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('error').classList.remove('hidden');
+}
+
+function generateMore() {
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('topic').focus();
+}
+
+function copyHeadline(headline, index) {
+    navigator.clipboard.writeText(headline).then(function() {
+        // Show temporary feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+        }, 1500);
+    }, function(err) {
+        console.error('Could not copy headline: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+
+function copyAllHeadlines() {
+    const allHeadlines = currentHeadlines.join('\n');
+    navigator.clipboard.writeText(allHeadlines).then(function() {
+        // Temporarily change button text
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span>✓</span><span>Copied All!</span>';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    }, function(err) {
+        console.error('Could not copy headlines: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+</script>
+{% endblock %}

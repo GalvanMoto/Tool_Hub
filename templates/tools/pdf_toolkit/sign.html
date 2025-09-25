@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF Sign - ToolHub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('main.index') }}" class="text-blue-600 hover:text-blue-800 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">PDF Sign</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Feature Description -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="text-center">
+                <div class="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Add Digital Signatures to PDF</h2>
+                <p class="text-gray-600">Digitally sign your PDF documents with text signatures, images, or certificate-based signatures</p>
+            </div>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <form id="signForm" enctype="multipart/form-data" class="space-y-6">
+                <!-- File Upload -->
+                <div>
+                    <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-2">
+                        Select PDF File
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                        <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" required class="hidden">
+                        <div id="dropArea" class="cursor-pointer">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-600">
+                                <span class="font-medium text-blue-600">Click to upload</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PDF files only</p>
+                        </div>
+                        <div id="fileName" class="mt-2 text-sm text-gray-600 hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Signature Options -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900">Signature Type</h3>
+                    
+                    <!-- Signature Type Selection -->
+                    <div>
+                        <div class="space-y-3">
+                            <label class="flex items-start">
+                                <input type="radio" name="signature_type" value="text" checked class="mt-1 mr-3">
+                                <div>
+                                    <span class="font-medium">Text Signature</span>
+                                    <p class="text-sm text-gray-500">Create a signature using custom text</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start">
+                                <input type="radio" name="signature_type" value="image" class="mt-1 mr-3">
+                                <div>
+                                    <span class="font-medium">Image Signature</span>
+                                    <p class="text-sm text-gray-500">Upload your handwritten signature image</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start">
+                                <input type="radio" name="signature_type" value="certificate" class="mt-1 mr-3">
+                                <div>
+                                    <span class="font-medium">Certificate Signature</span>
+                                    <p class="text-sm text-gray-500">Sign using a digital certificate (advanced)</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Text Signature Options -->
+                    <div id="textSignatureOptions">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="signature_text" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Signature Text
+                                </label>
+                                <input type="text" id="signature_text" name="signature_text" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                       placeholder="Enter your name or signature text">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="text_font" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Font Style
+                                    </label>
+                                    <select id="text_font" name="text_font" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                                        <option value="cursive">Cursive (Signature-like)</option>
+                                        <option value="serif">Serif (Formal)</option>
+                                        <option value="sans-serif">Sans-serif (Modern)</option>
+                                        <option value="monospace">Monospace (Typewriter)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="text_size" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Font Size
+                                    </label>
+                                    <input type="number" id="text_size" name="text_size" min="8" max="72" value="16" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="text_color" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Text Color
+                                    </label>
+                                    <select id="text_color" name="text_color" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                                        <option value="black">Black</option>
+                                        <option value="blue">Blue</option>
+                                        <option value="red">Red</option>
+                                        <option value="green">Green</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Signature Options -->
+                    <div id="imageSignatureOptions" class="hidden">
+                        <div>
+                            <label for="signature_image" class="block text-sm font-medium text-gray-700 mb-2">
+                                Signature Image
+                            </label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                                <input type="file" id="signature_image" name="signature_image" accept="image/*" class="hidden">
+                                <div id="imageDropArea" class="cursor-pointer">
+                                    <svg class="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <p class="mt-2 text-sm text-gray-600">
+                                        <span class="font-medium text-blue-600">Click to upload</span> signature image
+                                    </p>
+                                    <p class="text-xs text-gray-500">PNG, JPG, or GIF (transparent background recommended)</p>
+                                </div>
+                                <div id="imageFileName" class="mt-2 text-sm text-gray-600 hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certificate Signature Options -->
+                    <div id="certificateSignatureOptions" class="hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="certificate_file" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Digital Certificate (.p12/.pfx)
+                                </label>
+                                <input type="file" id="certificate_file" name="certificate_file" accept=".p12,.pfx" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="certificate_password" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Certificate Password
+                                </label>
+                                <input type="password" id="certificate_password" name="certificate_password" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                       placeholder="Enter certificate password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signature Position -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-medium text-gray-700">Signature Position</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="position_page" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Page Number
+                                </label>
+                                <input type="number" id="position_page" name="position_page" min="1" value="1" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="position_x" class="block text-sm font-medium text-gray-700 mb-2">
+                                    X Position (pixels from left)
+                                </label>
+                                <input type="number" id="position_x" name="position_x" min="0" value="400" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="position_y" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Y Position (pixels from bottom)
+                                </label>
+                                <input type="number" id="position_y" name="position_y" min="0" value="100" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Position Presets -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Quick Position Presets</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button type="button" class="position-preset px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50" 
+                                    data-x="50" data-y="100">Bottom Left</button>
+                            <button type="button" class="position-preset px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50" 
+                                    data-x="400" data-y="100">Bottom Right</button>
+                            <button type="button" class="position-preset px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50" 
+                                    data-x="50" data-y="700">Top Left</button>
+                            <button type="button" class="position-preset px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50" 
+                                    data-x="400" data-y="700">Top Right</button>
+                        </div>
+                    </div>
+
+                    <!-- Additional Options -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-medium text-gray-700">Additional Options</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="add_timestamp" checked class="mr-3">
+                                <span class="text-sm">Add timestamp to signature</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="add_location" class="mr-3">
+                                <span class="text-sm">Add location information</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="add_reason" class="mr-3">
+                                <span class="text-sm">Add signing reason</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Conditional Fields -->
+                    <div id="locationField" class="hidden">
+                        <label for="location_text" class="block text-sm font-medium text-gray-700 mb-2">
+                            Location
+                        </label>
+                        <input type="text" id="location_text" name="location_text" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                               placeholder="City, Country">
+                    </div>
+
+                    <div id="reasonField" class="hidden">
+                        <label for="reason_text" class="block text-sm font-medium text-gray-700 mb-2">
+                            Reason for Signing
+                        </label>
+                        <input type="text" id="reason_text" name="reason_text" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                               placeholder="Document approval, Agreement, etc.">
+                    </div>
+                </div>
+
+                <!-- Legal Notice -->
+                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-purple-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-medium text-purple-800">Legal Notice</h4>
+                            <p class="text-sm text-purple-700 mt-1">
+                                Digital signatures have legal implications. Ensure you have authorization to sign the document and understand the legal consequences in your jurisdiction.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end">
+                    <button type="submit" id="signBtn" 
+                            class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium transition-colors">
+                        <span id="signText">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Sign PDF
+                        </span>
+                        <span id="signLoading" class="hidden">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Signing...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Features List -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                <div class="w-12 h-12 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">Multiple Types</h3>
+                <p class="text-sm text-gray-600">Text, image, or certificate-based signatures</p>
+            </div>
+            <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                <div class="w-12 h-12 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">Secure & Legal</h3>
+                <p class="text-sm text-gray-600">Legally compliant digital signatures with timestamps</p>
+            </div>
+            <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                <div class="w-12 h-12 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 21h8a2 2 0 002-2v-1a2 2 0 00-2-2H7m0 5V9h8v10"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">Custom Position</h3>
+                <p class="text-sm text-gray-600">Place signatures anywhere on your document</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// File upload handling
+const fileInput = document.getElementById('pdf_file');
+const dropArea = document.getElementById('dropArea');
+const fileName = document.getElementById('fileName');
+
+dropArea.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        fileName.textContent = e.target.files[0].name;
+        fileName.classList.remove('hidden');
+    }
+});
+
+// Image signature upload handling
+const imageInput = document.getElementById('signature_image');
+const imageDropArea = document.getElementById('imageDropArea');
+const imageFileName = document.getElementById('imageFileName');
+
+imageDropArea.addEventListener('click', () => imageInput.click());
+
+imageInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        imageFileName.textContent = e.target.files[0].name;
+        imageFileName.classList.remove('hidden');
+    }
+});
+
+// Signature type toggle
+document.querySelectorAll('input[name="signature_type"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        const textOptions = document.getElementById('textSignatureOptions');
+        const imageOptions = document.getElementById('imageSignatureOptions');
+        const certOptions = document.getElementById('certificateSignatureOptions');
+        
+        // Hide all options first
+        textOptions.classList.add('hidden');
+        imageOptions.classList.add('hidden');
+        certOptions.classList.add('hidden');
+        
+        // Show relevant options
+        if (radio.value === 'text') {
+            textOptions.classList.remove('hidden');
+        } else if (radio.value === 'image') {
+            imageOptions.classList.remove('hidden');
+        } else if (radio.value === 'certificate') {
+            certOptions.classList.remove('hidden');
+        }
+    });
+});
+
+// Position presets
+document.querySelectorAll('.position-preset').forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const x = button.dataset.x;
+        const y = button.dataset.y;
+        document.getElementById('position_x').value = x;
+        document.getElementById('position_y').value = y;
+    });
+});
+
+// Additional options toggle
+document.querySelector('input[name="add_location"]').addEventListener('change', function() {
+    const locationField = document.getElementById('locationField');
+    if (this.checked) {
+        locationField.classList.remove('hidden');
+    } else {
+        locationField.classList.add('hidden');
+    }
+});
+
+document.querySelector('input[name="add_reason"]').addEventListener('change', function() {
+    const reasonField = document.getElementById('reasonField');
+    if (this.checked) {
+        reasonField.classList.remove('hidden');
+    } else {
+        reasonField.classList.add('hidden');
+    }
+});
+
+// Form submission
+document.getElementById('signForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const signBtn = document.getElementById('signBtn');
+    const signText = document.getElementById('signText');
+    const signLoading = document.getElementById('signLoading');
+    
+    // Show loading state
+    signText.classList.add('hidden');
+    signLoading.classList.remove('hidden');
+    signBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/tools/pdf/sign', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'signed_document.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            const error = await response.json();
+            alert('Error: ' + (error.error || 'Failed to sign PDF'));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while signing the PDF');
+    } finally {
+        // Reset button state
+        signText.classList.remove('hidden');
+        signLoading.classList.add('hidden');
+        signBtn.disabled = false;
+    }
+});
+
+// Drag and drop for PDF
+dropArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropArea.classList.add('border-blue-500');
+});
+
+dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('border-blue-500');
+});
+
+dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.classList.remove('border-blue-500');
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type === 'application/pdf') {
+        fileInput.files = files;
+        fileName.textContent = files[0].name;
+        fileName.classList.remove('hidden');
+    }
+});
+
+// Drag and drop for signature image
+imageDropArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    imageDropArea.classList.add('border-blue-500');
+});
+
+imageDropArea.addEventListener('dragleave', () => {
+    imageDropArea.classList.remove('border-blue-500');
+});
+
+imageDropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    imageDropArea.classList.remove('border-blue-500');
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith('image/')) {
+        imageInput.files = files;
+        imageFileName.textContent = files[0].name;
+        imageFileName.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %}

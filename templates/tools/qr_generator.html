@@ -1,0 +1,960 @@
+{% extends "base.html" %}
+
+{% block title %}Universal QR Code Generator - Create QR for Links, WiFi, Files & More - ToolHub{% endblock %}
+
+{% block content %}
+<section class="py-12 px-6 max-w-6xl mx-auto">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold mb-4 text-indigo-600">QR Code Generator</h1>
+    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+      Create QR codes for links, text, files, social media, payments & more! Professional features with instant preview.
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-8">
+    <!-- Left Panel: QR Type Selection & Form -->
+    <div class="space-y-6">
+      <!-- QR Type Selection -->
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Select QR Code Type</h2>
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+          <!-- URL/Link -->
+          <button type="button" onclick="selectQRType('url')" 
+                  class="qr-type-btn active flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="url">
+            <div class="text-2xl mb-2">🌐</div>
+            <span class="text-sm font-medium">URL/Link</span>
+          </button>
+          
+          <!-- Text -->
+          <button type="button" onclick="selectQRType('text')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="text">
+            <div class="text-2xl mb-2">📝</div>
+            <span class="text-sm font-medium">Text</span>
+          </button>
+          
+          <!-- WiFi -->
+          <button type="button" onclick="selectQRType('wifi')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="wifi">
+            <div class="text-2xl mb-2">📶</div>
+            <span class="text-sm font-medium">WiFi</span>
+          </button>
+          
+          <!-- vCard -->
+          <button type="button" onclick="selectQRType('vcard')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="vcard">
+            <div class="text-2xl mb-2">👤</div>
+            <span class="text-sm font-medium">vCard</span>
+          </button>
+          
+          <!-- Email -->
+          <button type="button" onclick="selectQRType('email')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="email">
+            <div class="text-2xl mb-2">📧</div>
+            <span class="text-sm font-medium">Email</span>
+          </button>
+          
+          <!-- Phone -->
+          <button type="button" onclick="selectQRType('phone')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="phone">
+            <div class="text-2xl mb-2">📞</div>
+            <span class="text-sm font-medium">Phone</span>
+          </button>
+          
+          <!-- SMS -->
+          <button type="button" onclick="selectQRType('sms')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="sms">
+            <div class="text-2xl mb-2">💬</div>
+            <span class="text-sm font-medium">SMS</span>
+          </button>
+          
+          <!-- WhatsApp -->
+          <button type="button" onclick="selectQRType('whatsapp')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="whatsapp">
+            <div class="text-2xl mb-2">💚</div>
+            <span class="text-sm font-medium">WhatsApp</span>
+          </button>
+          
+          <!-- Social Media -->
+          <button type="button" onclick="selectQRType('social')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="social">
+            <div class="text-2xl mb-2">📱</div>
+            <span class="text-sm font-medium">Social</span>
+          </button>
+          
+          <!-- YouTube -->
+          <button type="button" onclick="selectQRType('youtube')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="youtube">
+            <div class="text-2xl mb-2">📺</div>
+            <span class="text-sm font-medium">YouTube</span>
+          </button>
+          
+          <!-- Location -->
+          <button type="button" onclick="selectQRType('location')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="location">
+            <div class="text-2xl mb-2">📍</div>
+            <span class="text-sm font-medium">Location</span>
+          </button>
+          
+          <!-- File Upload -->
+          <button type="button" onclick="selectQRType('file')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="file">
+            <div class="text-2xl mb-2">📄</div>
+            <span class="text-sm font-medium">File</span>
+          </button>
+          
+          <!-- UPI Payment -->
+          <button type="button" onclick="selectQRType('upi')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="upi">
+            <div class="text-2xl mb-2">💰</div>
+            <span class="text-sm font-medium">UPI Pay</span>
+          </button>
+          
+          <!-- PayPal -->
+          <button type="button" onclick="selectQRType('paypal')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="paypal">
+            <div class="text-2xl mb-2">💳</div>
+            <span class="text-sm font-medium">PayPal</span>
+          </button>
+          
+          <!-- Crypto -->
+          <button type="button" onclick="selectQRType('crypto')" 
+                  class="qr-type-btn flex flex-col items-center p-4 border-2 rounded-lg hover:border-indigo-500 transition-colors"
+                  data-type="crypto">
+            <div class="text-2xl mb-2">₿</div>
+            <span class="text-sm font-medium">Crypto</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic Form Section -->
+      <form id="qrForm" class="bg-white p-6 rounded-xl shadow-lg space-y-4">
+        <input type="hidden" id="qr_type" name="qr_type" value="url">
+        
+        <!-- Dynamic form fields will be inserted here -->
+        <div id="dynamicForm">
+          <!-- URL Form (default) -->
+          <div id="form-url" class="form-section">
+            <label for="url" class="block font-medium text-gray-700 mb-2">Enter URL/Link</label>
+            <input type="url" id="url" name="url" 
+                   placeholder="https://example.com"
+                   class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+
+        <!-- Customization Options -->
+        <div class="grid md:grid-cols-2 gap-4 pt-4 border-t">
+          <div>
+            <label for="size" class="block font-medium text-gray-700 mb-2">Size</label>
+            <select id="size" name="size" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+              <option value="200">Small (200x200)</option>
+              <option value="300" selected>Medium (300x300)</option>
+              <option value="400">Large (400x400)</option>
+              <option value="500">Extra Large (500x500)</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="error_correction" class="block font-medium text-gray-700 mb-2">Error Correction</label>
+            <select id="error_correction" name="error_correction" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+              <option value="L">Low (7%)</option>
+              <option value="M" selected>Medium (15%)</option>
+              <option value="Q">Quartile (25%)</option>
+              <option value="H">High (30%)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Advanced Customization -->
+        <div class="pt-4 border-t">
+          <h3 class="font-semibold text-gray-700 mb-3">🎨 Design Customization</h3>
+          <div class="grid md:grid-cols-3 gap-4">
+            <div>
+              <label for="fg_color" class="block font-medium text-gray-700 mb-2">Foreground Color</label>
+              <div class="flex gap-2">
+                <input type="color" id="fg_color" name="fg_color" value="#000000" 
+                       class="w-12 h-10 border rounded cursor-pointer">
+                <input type="text" value="#000000" id="fg_color_text" 
+                       class="flex-1 p-2 border rounded text-sm">
+              </div>
+            </div>
+            
+            <div>
+              <label for="bg_color" class="block font-medium text-gray-700 mb-2">Background Color</label>
+              <div class="flex gap-2">
+                <input type="color" id="bg_color" name="bg_color" value="#ffffff" 
+                       class="w-12 h-10 border rounded cursor-pointer">
+                <input type="text" value="#ffffff" id="bg_color_text" 
+                       class="flex-1 p-2 border rounded text-sm">
+              </div>
+            </div>
+            
+            <div>
+              <label for="logo" class="block font-medium text-gray-700 mb-2">Center Logo</label>
+              <input type="file" id="logo" name="logo" accept="image/*" 
+                     class="w-full p-2 border rounded text-sm">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button type="submit" id="generateBtn" 
+                  class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium">
+            🚀 Generate QR Code
+          </button>
+          
+          <button type="button" onclick="resetForm()" 
+                  class="px-6 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-medium">
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Panel: Preview & Download -->
+    <div class="space-y-6">
+      <!-- QR Code Preview -->
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Preview</h2>
+        <div id="qrPreview" class="text-center min-h-[300px] flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
+          <div class="text-gray-500">
+            <div class="text-6xl mb-4">📱</div>
+            <p>Your QR code will appear here</p>
+            <p class="text-sm mt-2">Fill out the form and click generate</p>
+          </div>
+        </div>
+        
+        <!-- Download Options (hidden initially) -->
+        <div id="downloadOptions" class="hidden mt-6 space-y-3">
+          <div class="flex gap-3">
+            <button onclick="downloadQR('png')" 
+                    class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg">
+              📥 PNG
+            </button>
+            <button onclick="downloadQR('svg')" 
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
+              📥 SVG
+            </button>
+            <button onclick="downloadQR('pdf')" 
+                    class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg">
+              📥 PDF
+            </button>
+          </div>
+          
+          <div class="flex gap-3">
+            <button onclick="copyToClipboard()" 
+                    class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg">
+              📋 Copy Data
+            </button>
+            <button onclick="shareQR()" 
+                    class="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg">
+              📤 Share
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Info Panel -->
+      <div id="qrInfo" class="hidden bg-white p-6 rounded-xl shadow-lg">
+        <h3 class="font-semibold text-gray-700 mb-3">QR Code Details</h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Type:</span>
+            <span id="qrTypeDisplay" class="font-medium">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Size:</span>
+            <span id="qrSizeDisplay" class="font-medium">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Data:</span>
+            <span id="qrDataDisplay" class="font-medium text-right max-w-[200px] truncate">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Tips -->
+<section class="mt-16 bg-gradient-to-r from-indigo-50 to-purple-50 py-12 px-6 rounded-xl max-w-6xl mx-auto">
+  <h2 class="text-2xl font-bold text-center text-indigo-600 mb-8">💡 Quick Tips</h2>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="text-center">
+      <div class="text-3xl mb-3">⚡</div>
+      <h3 class="font-semibold mb-2">Instant Generation</h3>
+      <p class="text-sm text-gray-600">Create working QR codes in seconds with live preview</p>
+    </div>
+    <div class="text-center">
+      <div class="text-3xl mb-3">🎨</div>
+      <h3 class="font-semibold mb-2">Full Customization</h3>
+      <p class="text-sm text-gray-600">Colors, sizes, logos, and error correction levels</p>
+    </div>
+    <div class="text-center">
+      <div class="text-3xl mb-3">📱</div>
+      <h3 class="font-semibold mb-2">Mobile Optimized</h3>
+      <p class="text-sm text-gray-600">Works perfectly on all devices and screen sizes</p>
+    </div>
+  </div>
+</section>
+
+<!-- Popular Use Cases -->
+<section class="mt-16 py-12 px-6 max-w-6xl mx-auto bg-white rounded-xl shadow">
+  <h2 class="text-2xl font-bold text-center text-indigo-600 mb-8">🚀 Popular Use Cases</h2>
+  
+  <div class="grid md:grid-cols-4 gap-6">
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">🌐</div>
+      <h3 class="font-semibold mb-2">Website Links</h3>
+      <p class="text-sm text-gray-600">Share websites, portfolios, and online content</p>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">📶</div>
+      <h3 class="font-semibold mb-2">WiFi Sharing</h3>
+      <p class="text-sm text-gray-600">Let guests connect to WiFi instantly</p>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">👤</div>
+      <h3 class="font-semibold mb-2">Business Cards</h3>
+      <p class="text-sm text-gray-600">vCard contact information sharing</p>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">💬</div>
+      <h3 class="font-semibold mb-2">Social Media</h3>
+      <p class="text-sm text-gray-600">Instagram, Facebook, TikTok profiles</p>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">📄</div>
+      <h3 class="font-semibold mb-2">File Sharing</h3>
+      <p class="text-sm text-gray-600">PDFs, documents, and media files</p>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">📍</div>
+      <h3 class="font-semibold mb-2">Location</h3>
+      <p class="text-sm text-gray-600">GPS coordinates and addresses</p>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">📧</div>
+      <h3 class="font-semibold mb-2">Email</h3>
+      <p class="text-sm text-gray-600">Pre-filled email messages</p>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg text-center">
+      <div class="text-3xl mb-3">📺</div>
+      <h3 class="font-semibold mb-2">YouTube</h3>
+      <p class="text-sm text-gray-600">Video links and playlists</p>
+    </div>
+  </div>
+</section>
+
+<script>
+// Global variables
+let currentQRType = 'url';
+let generatedQRData = null;
+
+// Form templates for different QR types
+const formTemplates = {
+  url: `
+    <div class="form-section">
+      <label for="url" class="block font-medium text-gray-700 mb-2">Enter URL/Link</label>
+      <input type="url" id="url" name="url" 
+             placeholder="https://example.com"
+             class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+    </div>
+  `,
+  
+  text: `
+    <div class="form-section">
+      <label for="text" class="block font-medium text-gray-700 mb-2">Enter Text</label>
+      <textarea id="text" name="text" rows="3"
+                placeholder="Your text message here..."
+                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required></textarea>
+    </div>
+  `,
+  
+  wifi: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="wifi_ssid" class="block font-medium text-gray-700 mb-2">WiFi Network Name (SSID)</label>
+        <input type="text" id="wifi_ssid" name="wifi_ssid" 
+               placeholder="MyWiFiNetwork"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label for="wifi_password" class="block font-medium text-gray-700 mb-2">Password</label>
+        <input type="text" id="wifi_password" name="wifi_password" 
+               placeholder="yourpassword"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label for="wifi_security" class="block font-medium text-gray-700 mb-2">Security Type</label>
+        <select id="wifi_security" name="wifi_security" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          <option value="WPA">WPA/WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="nopass">Open (No Password)</option>
+        </select>
+      </div>
+    </div>
+  `,
+  
+  vcard: `
+    <div class="form-section space-y-4">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label for="vcard_name" class="block font-medium text-gray-700 mb-2">Full Name</label>
+          <input type="text" id="vcard_name" name="vcard_name" 
+                 placeholder="John Doe"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label for="vcard_company" class="block font-medium text-gray-700 mb-2">Company</label>
+          <input type="text" id="vcard_company" name="vcard_company" 
+                 placeholder="Company Inc."
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label for="vcard_phone" class="block font-medium text-gray-700 mb-2">Phone</label>
+          <input type="tel" id="vcard_phone" name="vcard_phone" 
+                 placeholder="+1234567890"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label for="vcard_email" class="block font-medium text-gray-700 mb-2">Email</label>
+          <input type="email" id="vcard_email" name="vcard_email" 
+                 placeholder="john@example.com"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+        </div>
+      </div>
+      <div>
+        <label for="vcard_address" class="block font-medium text-gray-700 mb-2">Address</label>
+        <textarea id="vcard_address" name="vcard_address" rows="2"
+                  placeholder="123 Main St, City, State, ZIP"
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+      </div>
+    </div>
+  `,
+  
+  email: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="email_to" class="block font-medium text-gray-700 mb-2">To Email</label>
+        <input type="email" id="email_to" name="email_to" 
+               placeholder="recipient@example.com"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label for="email_subject" class="block font-medium text-gray-700 mb-2">Subject</label>
+        <input type="text" id="email_subject" name="email_subject" 
+               placeholder="Email subject"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label for="email_body" class="block font-medium text-gray-700 mb-2">Message</label>
+        <textarea id="email_body" name="email_body" rows="3"
+                  placeholder="Email message..."
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+      </div>
+    </div>
+  `,
+  
+  phone: `
+    <div class="form-section">
+      <label for="phone_number" class="block font-medium text-gray-700 mb-2">Phone Number</label>
+      <input type="tel" id="phone_number" name="phone_number" 
+             placeholder="+1234567890"
+             class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+    </div>
+  `,
+  
+  sms: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="sms_number" class="block font-medium text-gray-700 mb-2">Phone Number</label>
+        <input type="tel" id="sms_number" name="sms_number" 
+               placeholder="+1234567890"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label for="sms_message" class="block font-medium text-gray-700 mb-2">Pre-filled Message</label>
+        <textarea id="sms_message" name="sms_message" rows="3"
+                  placeholder="Your SMS message..."
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+      </div>
+    </div>
+  `,
+  
+  whatsapp: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="whatsapp_number" class="block font-medium text-gray-700 mb-2">WhatsApp Number</label>
+        <input type="tel" id="whatsapp_number" name="whatsapp_number" 
+               placeholder="+1234567890"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label for="whatsapp_message" class="block font-medium text-gray-700 mb-2">Pre-filled Message</label>
+        <textarea id="whatsapp_message" name="whatsapp_message" rows="3"
+                  placeholder="Your WhatsApp message..."
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+      </div>
+    </div>
+  `,
+  
+  social: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="social_platform" class="block font-medium text-gray-700 mb-2">Platform</label>
+        <select id="social_platform" name="social_platform" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" onchange="updateSocialPlaceholder()">
+          <option value="instagram">Instagram</option>
+          <option value="facebook">Facebook</option>
+          <option value="twitter">Twitter/X</option>
+          <option value="tiktok">TikTok</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="snapchat">Snapchat</option>
+        </select>
+      </div>
+      <div>
+        <label for="social_username" class="block font-medium text-gray-700 mb-2">Username/Profile URL</label>
+        <input type="text" id="social_username" name="social_username" 
+               placeholder="username or https://instagram.com/username"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+    </div>
+  `,
+  
+  youtube: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="youtube_type" class="block font-medium text-gray-700 mb-2">YouTube Type</label>
+        <select id="youtube_type" name="youtube_type" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" onchange="updateYoutubePlaceholder()">
+          <option value="video">Single Video</option>
+          <option value="channel">Channel</option>
+          <option value="playlist">Playlist</option>
+        </select>
+      </div>
+      <div>
+        <label for="youtube_url" class="block font-medium text-gray-700 mb-2">YouTube URL</label>
+        <input type="url" id="youtube_url" name="youtube_url" 
+               placeholder="https://youtube.com/watch?v=..."
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+    </div>
+  `,
+  
+  location: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="location_type" class="block font-medium text-gray-700 mb-2">Location Type</label>
+        <select id="location_type" name="location_type" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" onchange="updateLocationForm()">
+          <option value="coordinates">GPS Coordinates</option>
+          <option value="address">Address</option>
+          <option value="google_maps">Google Maps Link</option>
+        </select>
+      </div>
+      <div id="coordinates_form">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label for="latitude" class="block font-medium text-gray-700 mb-2">Latitude</label>
+            <input type="number" step="any" id="latitude" name="latitude" 
+                   placeholder="40.7128"
+                   class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label for="longitude" class="block font-medium text-gray-700 mb-2">Longitude</label>
+            <input type="number" step="any" id="longitude" name="longitude" 
+                   placeholder="-74.0060"
+                   class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+      </div>
+      <div id="address_form" class="hidden">
+        <label for="address" class="block font-medium text-gray-700 mb-2">Address</label>
+        <textarea id="address" name="address" rows="2"
+                  placeholder="123 Main St, City, State, ZIP"
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+      </div>
+      <div id="maps_form" class="hidden">
+        <label for="maps_url" class="block font-medium text-gray-700 mb-2">Google Maps URL</label>
+        <input type="url" id="maps_url" name="maps_url" 
+               placeholder="https://maps.google.com/..."
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </div>
+    </div>
+  `,
+  
+  file: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="file_upload" class="block font-medium text-gray-700 mb-2">Select File</label>
+        <input type="file" id="file_upload" name="file_upload" 
+               accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+        <p class="text-sm text-gray-500 mt-1">Supported: Images, Videos, Audio, PDF, Documents (Max 10MB)</p>
+      </div>
+      <div>
+        <label for="file_title" class="block font-medium text-gray-700 mb-2">File Title (Optional)</label>
+        <input type="text" id="file_title" name="file_title" 
+               placeholder="My Document"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </div>
+    </div>
+  `,
+  
+  upi: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="upi_id" class="block font-medium text-gray-700 mb-2">UPI ID</label>
+        <input type="text" id="upi_id" name="upi_id" 
+               placeholder="user@paytm or user@phonepe"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label for="payee_name" class="block font-medium text-gray-700 mb-2">Payee Name</label>
+        <input type="text" id="payee_name" name="payee_name" 
+               placeholder="John Doe"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label for="amount" class="block font-medium text-gray-700 mb-2">Amount (₹)</label>
+          <input type="number" id="amount" name="amount" 
+                 placeholder="100.00" step="0.01"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label for="currency" class="block font-medium text-gray-700 mb-2">Currency</label>
+          <select id="currency" name="currency" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+            <option value="INR" selected>INR (₹)</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="transaction_note" class="block font-medium text-gray-700 mb-2">Transaction Note</label>
+        <input type="text" id="transaction_note" name="transaction_note" 
+               placeholder="Payment for services"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </div>
+    </div>
+  `,
+  
+  paypal: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="paypal_type" class="block font-medium text-gray-700 mb-2">PayPal Type</label>
+        <select id="paypal_type" name="paypal_type" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          <option value="donate">Donation</option>
+          <option value="buy">Buy Now</option>
+          <option value="cart">Add to Cart</option>
+        </select>
+      </div>
+      <div>
+        <label for="paypal_email" class="block font-medium text-gray-700 mb-2">PayPal Email/Merchant ID</label>
+        <input type="email" id="paypal_email" name="paypal_email" 
+               placeholder="merchant@example.com"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label for="paypal_amount" class="block font-medium text-gray-700 mb-2">Amount</label>
+          <input type="number" id="paypal_amount" name="paypal_amount" 
+                 placeholder="25.00" step="0.01"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label for="paypal_currency" class="block font-medium text-gray-700 mb-2">Currency</label>
+          <select id="paypal_currency" name="paypal_currency" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+            <option value="USD" selected>USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="INR">INR (₹)</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="item_name" class="block font-medium text-gray-700 mb-2">Item Name/Description</label>
+        <input type="text" id="item_name" name="item_name" 
+               placeholder="Digital Product or Service"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </div>
+    </div>
+  `,
+  
+  crypto: `
+    <div class="form-section space-y-4">
+      <div>
+        <label for="crypto_type" class="block font-medium text-gray-700 mb-2">Cryptocurrency</label>
+        <select id="crypto_type" name="crypto_type" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" onchange="updateCryptoPlaceholder()">
+          <option value="bitcoin">Bitcoin (BTC)</option>
+          <option value="ethereum">Ethereum (ETH)</option>
+          <option value="litecoin">Litecoin (LTC)</option>
+          <option value="dogecoin">Dogecoin (DOGE)</option>
+          <option value="binance">Binance Coin (BNB)</option>
+        </select>
+      </div>
+      <div>
+        <label for="crypto_address" class="block font-medium text-gray-700 mb-2">Wallet Address</label>
+        <input type="text" id="crypto_address" name="crypto_address" 
+               placeholder="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label for="crypto_amount" class="block font-medium text-gray-700 mb-2">Amount</label>
+          <input type="number" id="crypto_amount" name="crypto_amount" 
+                 placeholder="0.001" step="0.00000001"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label for="crypto_label" class="block font-medium text-gray-700 mb-2">Label (Optional)</label>
+          <input type="text" id="crypto_label" name="crypto_label" 
+                 placeholder="Payment for services"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+        </div>
+      </div>
+      <div>
+        <label for="crypto_message" class="block font-medium text-gray-700 mb-2">Message (Optional)</label>
+        <input type="text" id="crypto_message" name="crypto_message" 
+               placeholder="Thank you for your payment"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </div>
+    </div>
+  `
+};
+
+// QR Type Selection
+function selectQRType(type) {
+  currentQRType = type;
+  
+  // Update active button
+  document.querySelectorAll('.qr-type-btn').forEach(btn => {
+    btn.classList.remove('active', 'border-indigo-500', 'bg-indigo-50');
+    btn.classList.add('border-gray-200');
+  });
+  
+  const activeBtn = document.querySelector(`[data-type="${type}"]`);
+  activeBtn.classList.add('active', 'border-indigo-500', 'bg-indigo-50');
+  activeBtn.classList.remove('border-gray-200');
+  
+  // Update form
+  document.getElementById('qr_type').value = type;
+  document.getElementById('dynamicForm').innerHTML = formTemplates[type] || formTemplates.url;
+}
+
+// Color picker synchronization
+document.addEventListener('DOMContentLoaded', function() {
+  // Sync color pickers with text inputs
+  const fgColor = document.getElementById('fg_color');
+  const fgColorText = document.getElementById('fg_color_text');
+  const bgColor = document.getElementById('bg_color');
+  const bgColorText = document.getElementById('bg_color_text');
+  
+  fgColor.addEventListener('change', () => fgColorText.value = fgColor.value);
+  fgColorText.addEventListener('change', () => fgColor.value = fgColorText.value);
+  bgColor.addEventListener('change', () => bgColorText.value = bgColor.value);
+  bgColorText.addEventListener('change', () => bgColor.value = bgColorText.value);
+});
+
+// Helper functions for dynamic placeholders
+function updateSocialPlaceholder() {
+  const platform = document.getElementById('social_platform').value;
+  const input = document.getElementById('social_username');
+  const placeholders = {
+    'instagram': 'username or https://instagram.com/username',
+    'facebook': 'username or https://facebook.com/username',
+    'twitter': 'username or https://twitter.com/username',
+    'tiktok': 'username or https://tiktok.com/@username',
+    'linkedin': 'username or https://linkedin.com/in/username',
+    'snapchat': 'username or https://snapchat.com/add/username'
+  };
+  input.placeholder = placeholders[platform] || 'username';
+}
+
+function updateYoutubePlaceholder() {
+  const type = document.getElementById('youtube_type').value;
+  const input = document.getElementById('youtube_url');
+  const placeholders = {
+    'video': 'https://youtube.com/watch?v=VIDEO_ID',
+    'channel': 'https://youtube.com/channel/CHANNEL_ID',
+    'playlist': 'https://youtube.com/playlist?list=PLAYLIST_ID'
+  };
+  input.placeholder = placeholders[type] || 'https://youtube.com/...';
+}
+
+function updateCryptoPlaceholder() {
+  const crypto = document.getElementById('crypto_type').value;
+  const input = document.getElementById('crypto_address');
+  const placeholders = {
+    'bitcoin': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+    'ethereum': '0x742C0d8a7e39d3B6B8F5B6B2d3c6E4f5e6f7e8e9',
+    'litecoin': 'LTC1qw508d6qejxtdg4y5r3zarvary0c5xw7k0',
+    'dogecoin': 'D7Y55Lkqz7Gj5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z',
+    'binance': 'bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2'
+  };
+  input.placeholder = placeholders[crypto] || 'Wallet address';
+}
+
+// Form submission
+document.getElementById('qrForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  generateQRCode();
+});
+
+async function generateQRCode() {
+  const generateBtn = document.getElementById('generateBtn');
+  const originalText = generateBtn.innerHTML;
+  
+  // Show loading state
+  generateBtn.innerHTML = '⏳ Generating...';
+  generateBtn.disabled = true;
+  
+  try {
+    const formData = new FormData(document.getElementById('qrForm'));
+    
+    const response = await fetch('{{ url_for("tools.qr_generator") }}', {
+      method: 'POST',
+      body: formData
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      showQRResult(result);
+    } else {
+      alert('Error: ' + result.error);
+    }
+  } catch (error) {
+    alert('Error generating QR code: ' + error.message);
+  } finally {
+    // Reset button
+    generateBtn.innerHTML = originalText;
+    generateBtn.disabled = false;
+  }
+}
+
+function showQRResult(result) {
+  const preview = document.getElementById('qrPreview');
+  const downloadOptions = document.getElementById('downloadOptions');
+  const qrInfo = document.getElementById('qrInfo');
+  
+  // Show QR code
+  preview.innerHTML = `
+    <div class="bg-white p-4 rounded-lg shadow-lg inline-block">
+      <img src="data:image/png;base64,${result.qr_code}" alt="QR Code" class="mx-auto rounded-lg" style="max-width: 100%; height: auto;">
+    </div>
+  `;
+  
+  // Show download options
+  downloadOptions.classList.remove('hidden');
+  qrInfo.classList.remove('hidden');
+  
+  // Update info panel
+  document.getElementById('qrTypeDisplay').textContent = currentQRType.toUpperCase();
+  document.getElementById('qrSizeDisplay').textContent = document.getElementById('size').value + 'x' + document.getElementById('size').value;
+  document.getElementById('qrDataDisplay').textContent = result.data || 'Generated successfully';
+  
+  // Store data for downloads
+  generatedQRData = result;
+}
+
+// Download functions
+function downloadQR(format) {
+  if (!generatedQRData) return;
+  
+  const link = document.createElement('a');
+  link.download = `qrcode_${currentQRType}_${Date.now()}.${format}`;
+  
+  if (format === 'png') {
+    link.href = 'data:image/png;base64,' + generatedQRData.qr_code;
+  } else if (format === 'svg') {
+    // Convert to SVG (simplified)
+    link.href = 'data:image/svg+xml;base64,' + generatedQRData.qr_code;
+  } else if (format === 'pdf') {
+    // Convert to PDF (simplified)
+    link.href = 'data:application/pdf;base64,' + generatedQRData.qr_code;
+  }
+  
+  link.click();
+}
+
+function copyToClipboard() {
+  if (!generatedQRData || !generatedQRData.data) return;
+  
+  navigator.clipboard.writeText(generatedQRData.data).then(() => {
+    alert('QR code data copied to clipboard!');
+  });
+}
+
+function shareQR() {
+  if (navigator.share && generatedQRData) {
+    navigator.share({
+      title: 'QR Code',
+      text: 'Check out this QR code',
+      url: window.location.href
+    });
+  } else {
+    copyToClipboard();
+  }
+}
+
+function resetForm() {
+  document.getElementById('qrForm').reset();
+  document.getElementById('qrPreview').innerHTML = `
+    <div class="text-gray-500">
+      <div class="text-6xl mb-4">📱</div>
+      <p>Your QR code will appear here</p>
+      <p class="text-sm mt-2">Fill out the form and click generate</p>
+    </div>
+  `;
+  document.getElementById('downloadOptions').classList.add('hidden');
+  document.getElementById('qrInfo').classList.add('hidden');
+  generatedQRData = null;
+}
+
+// Helper functions for dynamic forms
+function updateSocialPlaceholder() {
+  const platform = document.getElementById('social_platform').value;
+  const input = document.getElementById('social_username');
+  const placeholders = {
+    instagram: 'username or https://instagram.com/username',
+    facebook: 'username or https://facebook.com/username',
+    twitter: 'username or https://twitter.com/username',
+    tiktok: 'username or https://tiktok.com/@username',
+    linkedin: 'profile or https://linkedin.com/in/profile',
+    snapchat: 'username'
+  };
+  input.placeholder = placeholders[platform] || 'username';
+}
+
+function updateYoutubePlaceholder() {
+  const type = document.getElementById('youtube_type').value;
+  const input = document.getElementById('youtube_url');
+  const placeholders = {
+    video: 'https://youtube.com/watch?v=...',
+    channel: 'https://youtube.com/channel/... or @channelname',
+    playlist: 'https://youtube.com/playlist?list=...'
+  };
+  input.placeholder = placeholders[type] || 'https://youtube.com/...';
+}
+
+function updateLocationForm() {
+  const type = document.getElementById('location_type').value;
+  document.getElementById('coordinates_form').classList.toggle('hidden', type !== 'coordinates');
+  document.getElementById('address_form').classList.toggle('hidden', type !== 'address');
+  document.getElementById('maps_form').classList.toggle('hidden', type !== 'google_maps');
+}
+</script>
+{% endblock %}

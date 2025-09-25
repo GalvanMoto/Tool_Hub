@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% block title %}Readability Score Analyzer{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-xl mb-4">
+                <span class="text-2xl">📖</span>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Readability Score Analyzer</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Analyze content readability using multiple established metrics</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <form id="readabilityForm">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content Text</label>
+                    <textarea name="content" rows="12" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Paste your content here to analyze its readability..."></textarea>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg transition-all">Analyze Readability</button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden space-y-8">
+            <!-- Reading Level Overview -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Reading Level Assessment</h3>
+                <div class="text-center mb-6">
+                    <div class="text-4xl font-bold text-indigo-600 mb-2" id="readingLevel">-</div>
+                    <div class="text-lg text-gray-600">Recommended Reading Level</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-indigo-50 rounded-lg p-6">
+                        <div class="text-2xl font-bold text-indigo-600 mb-2" id="fleschScore">-</div>
+                        <div class="text-sm font-medium text-gray-700">Flesch Reading Ease</div>
+                        <div class="text-sm text-gray-500 mt-1">0-30: Very Difficult • 30-50: Difficult • 50-60: Standard • 60-70: Easy • 70-80: Very Easy • 80-90: Extremely Easy • 90-100: Childish</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-6">
+                        <div class="text-2xl font-bold text-purple-600 mb-2" id="fleschGrade">-</div>
+                        <div class="text-sm font-medium text-gray-700">Flesch-Kincaid Grade Level</div>
+                        <div class="text-sm text-gray-500 mt-1">US school grade level required to understand the text</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Advanced Readability Scores -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Advanced Metrics</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">SMOG Index</span>
+                            <span class="text-lg font-semibold text-indigo-600" id="smogIndex">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Gunning Fog Index</span>
+                            <span class="text-lg font-semibold text-purple-600" id="gunningFog">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Avg. Sentence Length</span>
+                            <span class="text-lg font-semibold text-pink-600" id="avgSentenceLength">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Avg. Syllables per Word</span>
+                            <span class="text-lg font-semibold text-blue-600" id="avgSyllables">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Statistics -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Text Statistics</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Word Count</span>
+                            <span class="text-lg font-semibold text-green-600" id="wordCount">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Sentence Count</span>
+                            <span class="text-lg font-semibold text-blue-600" id="sentenceCount">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Syllable Count</span>
+                            <span class="text-lg font-semibold text-purple-600" id="syllableCount">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Analysis Date</span>
+                            <span class="text-lg font-semibold text-gray-600" id="analysisDate">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Readability Recommendations -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8 border border-indigo-200">
+                <h3 class="text-xl font-bold text-indigo-800 mb-4">📝 Readability Tips</h3>
+                <div id="readabilityTips" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingSection" class="hidden text-center py-12">
+            <div class="inline-flex items-center justify-center w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Analyzing readability...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorSection" class="hidden bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+            <div class="text-red-600 text-lg font-medium mb-2">Analysis Failed</div>
+            <p class="text-red-600" id="errorMessage"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('readabilityForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Show loading, hide others
+    document.getElementById('loadingSection').classList.remove('hidden');
+    document.getElementById('resultsSection').classList.add('hidden');
+    document.getElementById('errorSection').classList.add('hidden');
+    
+    try {
+        const response = await fetch('/tools/readability-score', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        document.getElementById('loadingSection').classList.add('hidden');
+        
+        if (data.success) {
+            displayResults(data);
+        } else {
+            showError(data.error || 'Analysis failed');
+        }
+    } catch (error) {
+        document.getElementById('loadingSection').classList.add('hidden');
+        showError('Network error occurred');
+    }
+});
+
+function displayResults(data) {
+    document.getElementById('readingLevel').textContent = data.reading_level;
+    document.getElementById('fleschScore').textContent = data.flesch_reading_ease;
+    document.getElementById('fleschGrade').textContent = data.flesch_kincaid_grade;
+    document.getElementById('smogIndex').textContent = data.smog_index || 'N/A';
+    document.getElementById('gunningFog').textContent = data.gunning_fog || 'N/A';
+    document.getElementById('wordCount').textContent = data.word_count.toLocaleString();
+    document.getElementById('sentenceCount').textContent = data.sentence_count.toLocaleString();
+    document.getElementById('syllableCount').textContent = data.syllable_count.toLocaleString();
+    document.getElementById('avgSentenceLength').textContent = data.avg_sentence_length;
+    document.getElementById('avgSyllables').textContent = data.avg_syllables_per_word;
+    document.getElementById('analysisDate').textContent = new Date(data.analysis_date).toLocaleDateString();
+    
+    // Generate readability tips
+    const tips = generateReadabilityTips(data);
+    const tipsContainer = document.getElementById('readabilityTips');
+    tipsContainer.innerHTML = '';
+    
+    tips.forEach(tip => {
+        const tipElement = document.createElement('div');
+        tipElement.className = 'bg-white rounded-lg p-4 border border-indigo-200';
+        tipElement.innerHTML = `
+            <div class="flex items-start space-x-3">
+                <div class="text-indigo-600 text-lg">${tip.icon}</div>
+                <div>
+                    <div class="text-sm font-medium text-gray-900">${tip.title}</div>
+                    <div class="text-sm text-gray-600 mt-1">${tip.description}</div>
+                </div>
+            </div>
+        `;
+        tipsContainer.appendChild(tipElement);
+    });
+    
+    document.getElementById('resultsSection').classList.remove('hidden');
+}
+
+function generateReadabilityTips(data) {
+    const tips = [];
+    
+    if (data.flesch_reading_ease < 50) {
+        tips.push({
+            icon: '✂️',
+            title: 'Shorten Sentences',
+            description: 'Your text is difficult to read. Try breaking long sentences into shorter ones.'
+        });
+    }
+    
+    if (data.avg_sentence_length > 20) {
+        tips.push({
+            icon: '📝',
+            title: 'Reduce Sentence Length',
+            description: `Average sentence length is ${data.avg_sentence_length} words. Aim for 15-20 words per sentence.`
+        });
+    }
+    
+    if (data.flesch_kincaid_grade > 12) {
+        tips.push({
+            icon: '🎯',
+            title: 'Simplify Vocabulary',
+            description: 'Text requires college-level reading. Use simpler words where possible.'
+        });
+    }
+    
+    if (data.avg_syllables_per_word > 1.5) {
+        tips.push({
+            icon: '🔤',
+            title: 'Use Shorter Words',
+            description: 'High syllable count detected. Consider using shorter, simpler alternatives.'
+        });
+    }
+    
+    if (data.flesch_reading_ease > 80) {
+        tips.push({
+            icon: '✅',
+            title: 'Excellent Readability',
+            description: 'Your content is very easy to read and accessible to most audiences.'
+        });
+    }
+    
+    if (tips.length === 0) {
+        tips.push({
+            icon: '👍',
+            title: 'Good Readability',
+            description: 'Your content has decent readability. Consider minor improvements for better accessibility.'
+        });
+    }
+    
+    return tips.slice(0, 4); // Limit to 4 tips
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('errorSection').classList.remove('hidden');
+}
+</script>
+{% endblock %}

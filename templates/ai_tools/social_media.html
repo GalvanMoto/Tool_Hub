@@ -1,0 +1,435 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Social Media Generator - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            AI Social Media Generator
+            <span class="text-2xl">📱</span>
+        </h1>
+        <p class="text-xl text-gray-600">
+            Create engaging social media content for all platforms with AI
+        </p>
+    </div>
+
+    <!-- Usage Counter -->
+    {% if current_user.is_authenticated %}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            {% if current_user.is_premium() %}
+                <p class="text-blue-800 font-medium">✨ Premium User - Unlimited Access</p>
+            {% else %}
+                <p class="text-blue-800 font-medium">📊 Daily Usage: Checking...</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Social Media Form -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <form id="socialForm" class="space-y-6">
+            <!-- Platform -->
+            <div>
+                <label for="platform" class="block text-sm font-medium text-gray-700 mb-2">
+                    Social Media Platform *
+                </label>
+                <select id="platform" 
+                        name="platform"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                    <option value="">Select platform</option>
+                    <option value="twitter">Twitter/X</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="pinterest">Pinterest</option>
+                    <option value="reddit">Reddit</option>
+                    <option value="threads">Threads</option>
+                    <option value="multi">Multi-Platform</option>
+                </select>
+            </div>
+
+            <!-- Content Type -->
+            <div>
+                <label for="content_type" class="block text-sm font-medium text-gray-700 mb-2">
+                    Content Type *
+                </label>
+                <select id="content_type" 
+                        name="content_type"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                    <option value="">Select content type</option>
+                    <option value="post">Regular Post</option>
+                    <option value="story">Story/Short Content</option>
+                    <option value="caption">Image/Video Caption</option>
+                    <option value="thread">Thread/Carousel</option>
+                    <option value="poll">Poll/Question</option>
+                    <option value="promotional">Promotional Content</option>
+                    <option value="educational">Educational Content</option>
+                    <option value="entertainment">Entertainment Content</option>
+                    <option value="news">News/Update</option>
+                    <option value="quote">Quote/Inspiration</option>
+                </select>
+            </div>
+
+            <!-- Topic/Message -->
+            <div>
+                <label for="topic" class="block text-sm font-medium text-gray-700 mb-2">
+                    Topic or Main Message *
+                </label>
+                <textarea id="topic" 
+                         name="topic" 
+                         required
+                         rows="3"
+                         placeholder="Describe what you want to post about, the main message, or key points to cover..."
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"></textarea>
+            </div>
+
+            <!-- Target Audience -->
+            <div>
+                <label for="audience" class="block text-sm font-medium text-gray-700 mb-2">
+                    Target Audience
+                </label>
+                <input type="text" 
+                       id="audience" 
+                       name="audience" 
+                       placeholder="e.g., Young professionals, Small business owners, Tech enthusiasts"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+            </div>
+
+            <!-- Tone -->
+            <div>
+                <label for="tone" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tone & Style
+                </label>
+                <select id="tone" 
+                        name="tone"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                    <option value="engaging">Engaging & Conversational</option>
+                    <option value="professional">Professional & Informative</option>
+                    <option value="casual">Casual & Friendly</option>
+                    <option value="funny">Funny & Humorous</option>
+                    <option value="inspiring">Inspiring & Motivational</option>
+                    <option value="urgent">Urgent & Action-Oriented</option>
+                    <option value="trendy">Trendy & Hip</option>
+                    <option value="educational">Educational & Helpful</option>
+                </select>
+            </div>
+
+            <!-- Keywords/Hashtags -->
+            <div>
+                <label for="keywords" class="block text-sm font-medium text-gray-700 mb-2">
+                    Keywords or Hashtags
+                </label>
+                <input type="text" 
+                       id="keywords" 
+                       name="keywords" 
+                       placeholder="e.g., #marketing, #AI, #productivity, trending, viral"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+            </div>
+
+            <!-- Call to Action -->
+            <div>
+                <label for="cta" class="block text-sm font-medium text-gray-700 mb-2">
+                    Call to Action
+                </label>
+                <select id="cta" 
+                        name="cta"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                    <option value="none">No Specific CTA</option>
+                    <option value="like">Like & Share</option>
+                    <option value="comment">Comment & Engage</option>
+                    <option value="follow">Follow for More</option>
+                    <option value="visit">Visit Link/Website</option>
+                    <option value="buy">Shop Now/Buy</option>
+                    <option value="signup">Sign Up/Subscribe</option>
+                    <option value="download">Download/Get</option>
+                    <option value="learn">Learn More</option>
+                </select>
+            </div>
+
+            <!-- Number of Variations -->
+            <div>
+                <label for="count" class="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Variations
+                </label>
+                <select id="count" 
+                        name="count"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                    <option value="3">3 Posts</option>
+                    <option value="5" selected>5 Posts</option>
+                    <option value="8">8 Posts</option>
+                    <option value="10">10 Posts</option>
+                </select>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" 
+                    id="generateBtn"
+                    class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🚀</span>
+                <span>Generate Social Media Content</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="hidden bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="text-pink-600 mr-2">📱</span>
+            Generated Social Media Posts
+        </h2>
+        
+        <!-- Platform Info -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium text-gray-600">Platform:</span>
+                    <span id="selectedPlatform" class="text-sm font-semibold text-gray-800"></span>
+                </div>
+                <div id="characterLimit" class="text-sm text-gray-500"></div>
+            </div>
+        </div>
+
+        <!-- Posts List -->
+        <div id="postsList" class="space-y-6 mb-6"></div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="copyAllPosts()" 
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>📋</span>
+                <span>Copy All Posts</span>
+            </button>
+            <button onclick="generateMore()" 
+                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🔄</span>
+                <span>Generate More</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div>
+        <p class="mt-4 text-gray-600">Creating engaging social media content...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <h3 class="text-lg font-semibold text-red-800 mb-2">Error</h3>
+        <p class="text-red-600" id="errorMessage"></p>
+        <button onclick="generateMore()" 
+                class="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            Try Again
+        </button>
+    </div>
+</div>
+
+<script>
+let currentPosts = [];
+let currentPlatform = '';
+
+const platformLimits = {
+    'twitter': 280,
+    'instagram': 2200,
+    'facebook': 63206,
+    'linkedin': 1300,
+    'tiktok': 150,
+    'youtube': 5000,
+    'pinterest': 500,
+    'reddit': 40000,
+    'threads': 500
+};
+
+const platformIcons = {
+    'twitter': '🐦',
+    'instagram': '📸',
+    'facebook': '📘',
+    'linkedin': '💼',
+    'tiktok': '🎵',
+    'youtube': '📺',
+    'pinterest': '📌',
+    'reddit': '🤖',
+    'threads': '🧵',
+    'multi': '🌐'
+};
+
+// Form submission
+document.getElementById('socialForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const platform = document.getElementById('platform').value;
+    const contentType = document.getElementById('content_type').value;
+    const topic = document.getElementById('topic').value.trim();
+    const audience = document.getElementById('audience').value.trim();
+    const tone = document.getElementById('tone').value;
+    const keywords = document.getElementById('keywords').value.trim();
+    const cta = document.getElementById('cta').value;
+    const count = document.getElementById('count').value;
+    
+    if (!platform || !contentType || !topic) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    currentPlatform = platform;
+
+    // Show loading, hide other sections
+    document.getElementById('loading').classList.remove('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+
+    try {
+        const response = await fetch('{{ url_for("ai_tools.ai_generate") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tool_type: 'social_media',
+                platform: platform,
+                content_type: contentType,
+                topic: topic,
+                audience: audience,
+                tone: tone,
+                keywords: keywords,
+                cta: cta,
+                count: parseInt(count)
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayResults(data.result);
+        } else {
+            showError(data.error || 'Failed to generate social media content');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Network error. Please try again.');
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
+    }
+});
+
+function displayResults(result) {
+    // Parse posts from result
+    let posts = [];
+    if (typeof result === 'string') {
+        posts = result.split('\n\n').filter(post => post.trim()).map(post => post.replace(/^\d+\.\s*/, ''));
+    } else if (Array.isArray(result)) {
+        posts = result;
+    } else if (result.posts) {
+        posts = result.posts;
+    }
+    
+    currentPosts = posts;
+    
+    // Update platform info
+    const platformName = currentPlatform.charAt(0).toUpperCase() + currentPlatform.slice(1);
+    const platformIcon = platformIcons[currentPlatform] || '📱';
+    document.getElementById('selectedPlatform').textContent = `${platformIcon} ${platformName}`;
+    
+    const charLimit = platformLimits[currentPlatform];
+    if (charLimit) {
+        document.getElementById('characterLimit').textContent = `Character limit: ${charLimit}`;
+    } else {
+        document.getElementById('characterLimit').textContent = '';
+    }
+    
+    const postsList = document.getElementById('postsList');
+    postsList.innerHTML = '';
+    
+    posts.forEach((post, index) => {
+        const charCount = post.trim().length;
+        const isWithinLimit = !charLimit || charCount <= charLimit;
+        
+        const postDiv = document.createElement('div');
+        postDiv.className = 'group border border-gray-200 rounded-lg p-6 hover:border-pink-300 transition-colors';
+        postDiv.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-pink-100 text-pink-600 text-sm font-medium px-3 py-1 rounded-full">Post ${index + 1}</span>
+                        <span class="text-sm text-gray-500">${charCount} characters</span>
+                        ${!isWithinLimit ? '<span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">Over limit</span>' : ''}
+                    </div>
+                    <button onclick="copyPost('${post.replace(/'/g, "\\'")}', ${index})" 
+                            class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">${post.trim()}</p>
+                </div>
+                
+                ${charLimit ? `
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Character count: ${charCount}/${charLimit}</span>
+                    <div class="w-32 bg-gray-200 rounded-full h-2">
+                        <div class="bg-pink-600 h-2 rounded-full" style="width: ${Math.min(100, (charCount / charLimit) * 100)}%"></div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+        `;
+        postsList.appendChild(postDiv);
+    });
+    
+    document.getElementById('results').classList.remove('hidden');
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('error').classList.remove('hidden');
+}
+
+function generateMore() {
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('topic').focus();
+}
+
+function copyPost(post, index) {
+    navigator.clipboard.writeText(post).then(function() {
+        // Show temporary feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+        }, 1500);
+    }, function(err) {
+        console.error('Could not copy post: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+
+function copyAllPosts() {
+    const allPosts = currentPosts.map((post, index) => 
+        `Post ${index + 1}:\n${post}`
+    ).join('\n\n---\n\n');
+    
+    navigator.clipboard.writeText(allPosts).then(function() {
+        // Temporarily change button text
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span>✓</span><span>Copied All!</span>';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    }, function(err) {
+        console.error('Could not copy posts: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+</script>
+{% endblock %}

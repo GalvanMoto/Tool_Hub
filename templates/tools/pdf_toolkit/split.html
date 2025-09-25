@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF Split - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="text-6xl mb-4">✂️</div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">PDF Split</h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Split a PDF file into separate pages or extract specific page ranges. Perfect for organizing large documents.
+        </p>
+    </div>
+
+    <!-- Tool Form -->
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <form id="pdfSplitForm" action="{{ url_for('tools.pdf_split_process') }}" method="post" enctype="multipart/form-data">
+            
+            <!-- File Upload Section -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Select PDF File to Split
+                </label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
+                    <div class="text-4xl mb-2">📄</div>
+                    <input type="file" name="pdf_file" accept=".pdf" required 
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <p class="mt-2 text-sm text-gray-500">Upload a PDF file (max 10MB)</p>
+                </div>
+            </div>
+
+            <!-- Split Options -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Split Method
+                </label>
+                <select name="split_method" id="splitMethod" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <option value="all">Split into individual pages</option>
+                    <option value="range">Extract specific page range</option>
+                    <option value="interval">Split every N pages</option>
+                </select>
+            </div>
+
+            <!-- Page Range Input (shown when range is selected) -->
+            <div id="pageRangeSection" class="mb-6 hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Page Range
+                </label>
+                <input type="text" name="page_range" placeholder="e.g., 1-5, 10-15" 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                <p class="mt-1 text-sm text-gray-500">Specify page ranges (e.g., "1-5" or "1-3,7-9")</p>
+            </div>
+
+            <!-- Interval Input (shown when interval is selected) -->
+            <div id="intervalSection" class="mb-6 hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Split Interval
+                </label>
+                <input type="number" name="split_interval" min="1" value="1" 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                <p class="mt-1 text-sm text-gray-500">Number of pages per split file</p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                Split PDF
+            </button>
+        </form>
+    </div>
+
+    <!-- Features Section -->
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">🎯</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Precise Control</h3>
+            <p class="text-gray-600 text-sm">Extract exact pages or ranges you need with flexible splitting options.</p>
+        </div>
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">📚</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Batch Processing</h3>
+            <p class="text-gray-600 text-sm">Split large documents into manageable smaller files quickly.</p>
+        </div>
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">💾</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Quality Preserved</h3>
+            <p class="text-gray-600 text-sm">Split PDFs maintain original quality and formatting.</p>
+        </div>
+    </div>
+
+    <!-- Back to Tools -->
+    <div class="text-center mt-8">
+        <a href="{{ url_for('tools.index') }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-700">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to All Tools
+        </a>
+    </div>
+</div>
+
+<script>
+document.getElementById('splitMethod').addEventListener('change', function() {
+    const method = this.value;
+    const pageRangeSection = document.getElementById('pageRangeSection');
+    const intervalSection = document.getElementById('intervalSection');
+    
+    // Hide all sections first
+    pageRangeSection.classList.add('hidden');
+    intervalSection.classList.add('hidden');
+    
+    // Show relevant section
+    if (method === 'range') {
+        pageRangeSection.classList.remove('hidden');
+    } else if (method === 'interval') {
+        intervalSection.classList.remove('hidden');
+    }
+});
+
+document.getElementById('pdfSplitForm').addEventListener('submit', function(e) {
+    // Show loading state
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Splitting PDF...';
+});
+</script>
+{% endblock %}

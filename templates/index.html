@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="bg-gray-900 text-white text-center py-20 px-6">
+  <h1 class="text-5xl font-bold mb-6">Welcome to ToolHub</h1>
+  <p class="text-lg mb-8 max-w-2xl mx-auto">
+    Your one-stop platform for productivity tools. Convert, edit, optimize, and
+    grow — all in one place.
+  </p>
+  <div class="flex justify-center gap-4">
+    <a href="#tools" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg text-white font-medium">Explore Tools</a>
+    <a href="/signup" class="bg-white text-indigo-600 hover:bg-gray-200 px-6 py-3 rounded-lg font-medium">Get Started</a>
+  </div>
+</section>
+
+<!-- Tools Preview Section -->
+<section class="py-16 px-6 bg-white text-gray-800" id="tools">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-bold mb-12">Popular Tools</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="p-6 bg-gray-100 rounded-xl shadow hover:shadow-lg">
+        <h3 class="text-xl font-semibold mb-4">PDF Merge</h3>
+        <p class="mb-4">Combine multiple PDF files into one in seconds.</p>
+        <a href="/tools/pdf-merge" class="text-indigo-600 font-medium hover:underline">Try Now →</a>
+      </div>
+      <div class="p-6 bg-gray-100 rounded-xl shadow hover:shadow-lg">
+        <h3 class="text-xl font-semibold mb-4">Image Resizer</h3>
+        <p class="mb-4">Resize images instantly without losing quality.</p>
+        <a href="/tools/image-resizer" class="text-indigo-600 font-medium hover:underline">Try Now →</a>
+      </div>
+      <div class="p-6 bg-gray-100 rounded-xl shadow hover:shadow-lg">
+        <h3 class="text-xl font-semibold mb-4">QR Code Generator</h3>
+        <p class="mb-4">Generate QR codes for links, text, or files.</p>
+        <a href="/tools/qr-generator" class="text-indigo-600 font-medium hover:underline">Try Now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="py-20 px-6 bg-gray-50 text-center">
+  <h2 class="text-3xl font-bold mb-6">Choose Your Plan</h2>
+  <p class="mb-12 text-gray-600">Upgrade anytime. Cancel anytime.</p>
+  <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+    <!-- Free -->
+    <div class="p-8 bg-white shadow rounded-xl">
+      <h3 class="text-xl font-bold mb-4">Free</h3>
+      <p class="text-gray-600 mb-6">Basic access to limited tools</p>
+      <p class="text-4xl font-bold mb-6">$0</p>
+      <a href="/signup" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium">Get Started</a>
+    </div>
+    <!-- Monthly -->
+    <div class="p-8 bg-indigo-600 text-white shadow-xl rounded-xl">
+      <h3 class="text-xl font-bold mb-4">Pro</h3>
+      <p class="mb-6">Unlock individual tools</p>
+      <p class="text-4xl font-bold mb-6">$5<span class="text-lg">/mo</span></p>
+      <a href="/pricing" class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium">Upgrade</a>
+    </div>
+    <!-- Lifetime -->
+    <div class="p-8 bg-white shadow rounded-xl">
+      <h3 class="text-xl font-bold mb-4">Lifetime</h3>
+      <p class="text-gray-600 mb-6">One-time payment, lifetime access</p>
+      <p class="text-4xl font-bold mb-6">$99</p>
+      <a href="/pricing" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium">Get Lifetime</a>
+    </div>
+  </div>
+</section>
+
+<!-- Blog Section -->
+<section class="py-16 px-6 bg-white text-gray-800">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl font-bold mb-12">Latest Blogs</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="p-6 bg-gray-100 rounded-xl shadow hover:shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">Boost Productivity with PDF Tools</h3>
+        <p class="mb-4 text-gray-600">Learn how to save time with quick PDF conversions.</p>
+        <a href="/blog/pdf-productivity" class="text-indigo-600 hover:underline">Read More →</a>
+      </div>
+      <div class="p-6 bg-gray-100 rounded-xl shadow hover:shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">Top Image Editing Hacks</h3>
+        <p class="mb-4 text-gray-600">5 tricks to optimize images for work and school.</p>
+        <a href="/blog/image-hacks" class="text-indigo-600 hover:underline">Read More →</a>
+      </div>
+      <div class="p-6 bg-gray-100 rounded-xl shadow hover:shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">Why QR Codes Matter in 2025</h3>
+        <p class="mb-4 text-gray-600">QR codes are everywhere. Here's why you should use them.</p>
+        <a href="/blog/qr-future" class="text-indigo-600 hover:underline">Read More →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 px-6 bg-indigo-600 text-white text-center">
+  <h2 class="text-3xl font-bold mb-6">Start Using ToolHub Today</h2>
+  <p class="mb-8">Sign up now and explore our growing collection of tools.</p>
+  <a href="/signup" class="bg-white text-indigo-600 hover:bg-gray-200 px-8 py-4 rounded-lg font-bold">Get Started</a>
+</section>
+
+{% endblock %}

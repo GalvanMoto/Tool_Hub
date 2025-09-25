@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Content Tools - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            AI Content Tools
+            <span class="text-2xl">🤖</span>
+        </h1>
+        <p class="text-xl text-gray-600 mb-6">
+            Create amazing content with AI-powered writing tools
+        </p>
+        
+        {% if current_user.is_authenticated %}
+            <div class="inline-flex items-center px-4 py-2 rounded-lg bg-blue-50 border border-blue-200">
+                {% if current_user.is_premium() %}
+                    <span class="text-blue-800 font-medium">✨ Premium User - Unlimited Access</span>
+                {% else %}
+                    <span class="text-blue-800 font-medium">
+                        📊 Daily Usage: {{ daily_usage }}/{{ usage_limit }}
+                    </span>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="inline-flex items-center px-4 py-2 rounded-lg bg-yellow-50 border border-yellow-200">
+                <span class="text-yellow-800 font-medium">🔒 Login required to use AI tools</span>
+                <a href="{{ url_for('auth.login') }}" class="ml-2 text-yellow-800 underline hover:no-underline">Login here</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Blog Generator -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">📝</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Blog Generator</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Generate complete, engaging blog posts on any topic with customizable tone and length.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-purple-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.blog_generator') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
+                        Create Blog
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article Summarizer -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">📄</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Article Summarizer</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Transform long articles into concise summaries. Choose bullet points or paragraph format.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-blue-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.article_summarizer') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                        Summarize
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paraphrasing Tool -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-green-500 to-teal-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">🔄</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Paraphraser</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Rewrite text in different styles while preserving meaning. Perfect for avoiding repetition.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-green-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.paraphraser') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                        Paraphrase
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grammar Checker -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-red-500 to-orange-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">✅</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Grammar Checker</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Check and improve grammar, spelling, and writing style with AI-powered suggestions.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-red-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.grammar_checker') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
+                        Check Grammar
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Headline Generator -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">📰</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Headline Generator</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Create compelling headlines that grab attention and drive engagement.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-indigo-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.headline_generator') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                        Generate Headlines
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta Description -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">🏷️</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Meta Description</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Generate SEO-optimized meta descriptions that improve search rankings and CTR.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-yellow-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.meta_description') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm font-medium">
+                        Generate Meta
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Description -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-pink-500 to-rose-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">🛍️</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Product Description</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Write compelling product descriptions that convert browsers into buyers.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-pink-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.product_description') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors text-sm font-medium">
+                        Write Description
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Writer -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-cyan-500 to-blue-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">📧</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Email Writer</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Compose professional emails for any purpose with the perfect tone and structure.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-cyan-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.email_writer') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors text-sm font-medium">
+                        Write Email
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-violet-500 to-purple-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">📱</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Social Media</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Create engaging social media captions for all platforms with trending hashtags.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-violet-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.social_media') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors text-sm font-medium">
+                        Create Caption
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Copy Generator -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden group">
+            <div class="bg-gradient-to-r from-emerald-500 to-green-500 h-2"></div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <span class="text-3xl mr-3">📢</span>
+                    <h3 class="text-xl font-semibold text-gray-800">Ad Copy Generator</h3>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">
+                    Generate high-converting ad copy for Facebook, Google Ads, and other platforms.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-emerald-600 font-medium">AI-POWERED</span>
+                    <a href="{{ url_for('ai_tools.ad_copy') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium">
+                        Create Ad Copy
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade CTA for Free Users -->
+    {% if current_user.is_authenticated and not current_user.is_premium() %}
+        <div class="mt-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white text-center">
+            <h3 class="text-2xl font-bold mb-4">Ready for Unlimited AI Power? ✨</h3>
+            <p class="text-purple-100 mb-6">
+                Upgrade to Premium and unlock unlimited access to all AI tools plus advanced features
+            </p>
+            <a href="{{ url_for('auth.upgrade') }}" 
+               class="inline-flex items-center px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                Upgrade to Premium
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Feature Highlights -->
+    <div class="mt-16 bg-gray-50 rounded-2xl p-8">
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-8">Why Choose Our AI Tools?</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">⚡</span>
+                </div>
+                <h4 class="font-semibold text-gray-800 mb-2">Lightning Fast</h4>
+                <p class="text-gray-600 text-sm">Get results in seconds, not hours. Our AI is optimized for speed and quality.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">🎯</span>
+                </div>
+                <h4 class="font-semibold text-gray-800 mb-2">Highly Accurate</h4>
+                <p class="text-gray-600 text-sm">Powered by advanced AI models trained on billions of high-quality content pieces.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">🔧</span>
+                </div>
+                <h4 class="font-semibold text-gray-800 mb-2">Fully Customizable</h4>
+                <p class="text-gray-600 text-sm">Adjust tone, style, length, and format to match your specific needs perfectly.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

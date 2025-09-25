@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF Watermark - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="text-6xl mb-4">🏷️</div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">PDF Watermark</h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Add text watermarks to your PDF documents. Perfect for branding, copyright protection, or document tracking.
+        </p>
+    </div>
+
+    <!-- Tool Form -->
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <form id="pdfWatermarkForm" action="{{ url_for('tools.pdf_watermark_process') }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="tool" value="watermark">
+            
+            <!-- File Upload Section -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Select PDF File
+                </label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
+                    <div class="text-4xl mb-2">📄</div>
+                    <input type="file" name="files" accept=".pdf" required 
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <p class="mt-2 text-sm text-gray-500">Upload a PDF file (max 10MB)</p>
+                </div>
+            </div>
+
+            <!-- Watermark Text -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Watermark Text
+                </label>
+                <input type="text" name="watermark_text" required 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                       placeholder="Enter watermark text">
+                <p class="mt-1 text-sm text-gray-500">This text will appear as a watermark on each page</p>
+            </div>
+
+            <!-- Watermark Opacity -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Opacity
+                </label>
+                <div class="flex items-center space-x-4">
+                    <input type="range" name="watermark_opacity" min="0.1" max="1" step="0.1" value="0.3" 
+                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                           oninput="updateOpacityValue(this.value)">
+                    <span id="opacityValue" class="text-sm font-medium text-gray-700 w-12">30%</span>
+                </div>
+                <p class="mt-1 text-sm text-gray-500">Lower values make the watermark more transparent</p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                Add Watermark
+            </button>
+        </form>
+    </div>
+
+    <!-- Features Section -->
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">🎨</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Custom Text</h3>
+            <p class="text-gray-600 text-sm">Add any text as a watermark - company name, copyright, or tracking info.</p>
+        </div>
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">👁️</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Adjustable Opacity</h3>
+            <p class="text-gray-600 text-sm">Control transparency to balance visibility with document readability.</p>
+        </div>
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">🛡️</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Professional Protection</h3>
+            <p class="text-gray-600 text-sm">Protect your documents from unauthorized use with visible watermarks.</p>
+        </div>
+    </div>
+
+    <!-- Back to Tools -->
+    <div class="text-center mt-8">
+        <a href="{{ url_for('tools.index') }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-700">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to All Tools
+        </a>
+    </div>
+</div>
+
+<script>
+function updateOpacityValue(value) {
+    document.getElementById('opacityValue').textContent = Math.round(value * 100) + '%';
+}
+
+document.getElementById('pdfWatermarkForm').addEventListener('submit', function(e) {
+    // Show loading state
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Adding Watermark...';
+});
+</script>
+{% endblock %}

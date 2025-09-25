@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Product Description Generator - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            AI Product Description Generator
+            <span class="text-2xl">🛍️</span>
+        </h1>
+        <p class="text-xl text-gray-600">
+            Create compelling product descriptions that convert browsers into buyers
+        </p>
+    </div>
+
+    <!-- Usage Counter -->
+    {% if current_user.is_authenticated %}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            {% if current_user.is_premium() %}
+                <p class="text-blue-800 font-medium">✨ Premium User - Unlimited Access</p>
+            {% else %}
+                <p class="text-blue-800 font-medium">📊 Daily Usage: Checking...</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Product Description Form -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <form id="productForm" class="space-y-6">
+            <!-- Product Name -->
+            <div>
+                <label for="product_name" class="block text-sm font-medium text-gray-700 mb-2">
+                    Product Name *
+                </label>
+                <input type="text" 
+                       id="product_name" 
+                       name="product_name" 
+                       required
+                       placeholder="e.g., Wireless Bluetooth Headphones"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            </div>
+
+            <!-- Product Category -->
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                    Product Category *
+                </label>
+                <select id="category" 
+                        name="category"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option value="">Select a category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing & Fashion</option>
+                    <option value="home-garden">Home & Garden</option>
+                    <option value="beauty-health">Beauty & Health</option>
+                    <option value="sports-outdoors">Sports & Outdoors</option>
+                    <option value="books-media">Books & Media</option>
+                    <option value="toys-games">Toys & Games</option>
+                    <option value="automotive">Automotive</option>
+                    <option value="jewelry">Jewelry</option>
+                    <option value="food-beverages">Food & Beverages</option>
+                    <option value="pet-supplies">Pet Supplies</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <!-- Key Features -->
+            <div>
+                <label for="features" class="block text-sm font-medium text-gray-700 mb-2">
+                    Key Features & Benefits *
+                </label>
+                <textarea id="features" 
+                         name="features" 
+                         required
+                         rows="4"
+                         placeholder="List the main features, benefits, and selling points of your product..."
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"></textarea>
+            </div>
+
+            <!-- Target Audience -->
+            <div>
+                <label for="target_audience" class="block text-sm font-medium text-gray-700 mb-2">
+                    Target Audience
+                </label>
+                <input type="text" 
+                       id="target_audience" 
+                       name="target_audience" 
+                       placeholder="e.g., Fitness enthusiasts, Working professionals, Parents"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            </div>
+
+            <!-- Price Range -->
+            <div>
+                <label for="price_range" class="block text-sm font-medium text-gray-700 mb-2">
+                    Price Range
+                </label>
+                <select id="price_range" 
+                        name="price_range"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option value="budget">Budget ($1-$25)</option>
+                    <option value="affordable">Affordable ($25-$100)</option>
+                    <option value="mid-range" selected>Mid-range ($100-$500)</option>
+                    <option value="premium">Premium ($500-$1000)</option>
+                    <option value="luxury">Luxury ($1000+)</option>
+                    <option value="not-specified">Not Specified</option>
+                </select>
+            </div>
+
+            <!-- Tone Style -->
+            <div>
+                <label for="tone" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tone & Style
+                </label>
+                <select id="tone" 
+                        name="tone"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option value="professional">Professional & Informative</option>
+                    <option value="friendly">Friendly & Conversational</option>
+                    <option value="exciting">Exciting & Energetic</option>
+                    <option value="luxurious">Luxurious & Sophisticated</option>
+                    <option value="technical">Technical & Detailed</option>
+                    <option value="casual">Casual & Relaxed</option>
+                </select>
+            </div>
+
+            <!-- Description Length -->
+            <div>
+                <label for="length" class="block text-sm font-medium text-gray-700 mb-2">
+                    Description Length
+                </label>
+                <select id="length" 
+                        name="length"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option value="short">Short (50-100 words)</option>
+                    <option value="medium" selected>Medium (100-200 words)</option>
+                    <option value="long">Long (200-300 words)</option>
+                    <option value="detailed">Detailed (300+ words)</option>
+                </select>
+            </div>
+
+            <!-- Number of Variations -->
+            <div>
+                <label for="count" class="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Variations
+                </label>
+                <select id="count" 
+                        name="count"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option value="1">1 Description</option>
+                    <option value="3" selected>3 Descriptions</option>
+                    <option value="5">5 Descriptions</option>
+                </select>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" 
+                    id="generateBtn"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>✨</span>
+                <span>Generate Product Descriptions</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="hidden bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="text-purple-600 mr-2">🛍️</span>
+            Generated Product Descriptions
+        </h2>
+        
+        <!-- Descriptions List -->
+        <div id="descriptionsList" class="space-y-6 mb-6"></div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="copyAllDescriptions()" 
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>📋</span>
+                <span>Copy All Descriptions</span>
+            </button>
+            <button onclick="generateMore()" 
+                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🔄</span>
+                <span>Generate More</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        <p class="mt-4 text-gray-600">Generating compelling product descriptions...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <h3 class="text-lg font-semibold text-red-800 mb-2">Error</h3>
+        <p class="text-red-600" id="errorMessage"></p>
+        <button onclick="generateMore()" 
+                class="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            Try Again
+        </button>
+    </div>
+</div>
+
+<script>
+let currentDescriptions = [];
+
+// Form submission
+document.getElementById('productForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const productName = document.getElementById('product_name').value.trim();
+    const category = document.getElementById('category').value;
+    const features = document.getElementById('features').value.trim();
+    const targetAudience = document.getElementById('target_audience').value.trim();
+    const priceRange = document.getElementById('price_range').value;
+    const tone = document.getElementById('tone').value;
+    const length = document.getElementById('length').value;
+    const count = document.getElementById('count').value;
+    
+    if (!productName || !category || !features) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    // Show loading, hide other sections
+    document.getElementById('loading').classList.remove('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+
+    try {
+        const response = await fetch('{{ url_for("ai_tools.ai_generate") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tool_type: 'product_description',
+                product_name: productName,
+                category: category,
+                features: features,
+                target_audience: targetAudience,
+                price_range: priceRange,
+                tone: tone,
+                length: length,
+                count: parseInt(count)
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayResults(data.result);
+        } else {
+            showError(data.error || 'Failed to generate product descriptions');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Network error. Please try again.');
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
+    }
+});
+
+function displayResults(result) {
+    // Parse descriptions from result
+    let descriptions = [];
+    if (typeof result === 'string') {
+        // Split by double newlines or numbered patterns
+        descriptions = result.split(/\n\s*\n|\d+\.\s*/).filter(desc => desc.trim());
+    } else if (Array.isArray(result)) {
+        descriptions = result;
+    } else if (result.descriptions) {
+        descriptions = result.descriptions;
+    }
+    
+    currentDescriptions = descriptions;
+    
+    const descriptionsList = document.getElementById('descriptionsList');
+    descriptionsList.innerHTML = '';
+    
+    descriptions.forEach((description, index) => {
+        const wordCount = description.trim().split(/\s+/).length;
+        
+        const descDiv = document.createElement('div');
+        descDiv.className = 'group border border-gray-200 rounded-lg p-6 hover:border-purple-300 transition-colors';
+        descDiv.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-purple-100 text-purple-600 text-sm font-medium px-3 py-1 rounded-full">Version ${index + 1}</span>
+                        <span class="text-sm text-gray-500">${wordCount} words</span>
+                    </div>
+                    <button onclick="copyDescription('${description.replace(/'/g, "\\'")}', ${index})" 
+                            class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="prose prose-gray max-w-none">
+                    <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">${description.trim()}</p>
+                </div>
+            </div>
+        `;
+        descriptionsList.appendChild(descDiv);
+    });
+    
+    document.getElementById('results').classList.remove('hidden');
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('error').classList.remove('hidden');
+}
+
+function generateMore() {
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('product_name').focus();
+}
+
+function copyDescription(description, index) {
+    navigator.clipboard.writeText(description).then(function() {
+        // Show temporary feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+        }, 1500);
+    }, function(err) {
+        console.error('Could not copy description: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+
+function copyAllDescriptions() {
+    const allDescriptions = currentDescriptions.map((desc, index) => 
+        `Version ${index + 1}:\n${desc}`
+    ).join('\n\n---\n\n');
+    
+    navigator.clipboard.writeText(allDescriptions).then(function() {
+        // Temporarily change button text
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span>✓</span><span>Copied All!</span>';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    }, function(err) {
+        console.error('Could not copy descriptions: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+</script>
+{% endblock %}

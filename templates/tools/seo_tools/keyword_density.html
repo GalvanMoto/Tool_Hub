@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}Keyword Density Checker{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 via-teal-50 to-blue-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-xl mb-4">
+                <span class="text-2xl">🔍</span>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent mb-2">Keyword Density Checker</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Analyze keyword frequency and density in your content</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <form id="keywordForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Content Text</label>
+                        <textarea name="content" rows="8" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Paste your content here..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Or Enter URL</label>
+                        <input type="url" name="url" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="https://example.com">
+                        <p class="text-sm text-gray-500 mt-2">We'll extract text content from the webpage</p>
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 rounded-lg hover:shadow-lg transition-all">Analyze Keyword Density</button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden space-y-8">
+            <!-- Overview Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-green-600" id="totalWords">0</div>
+                    <div class="text-gray-600">Total Words</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-teal-600" id="uniqueWords">0</div>
+                    <div class="text-gray-600">Unique Words</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-blue-600" id="analysisDate">-</div>
+                    <div class="text-gray-600">Analysis Date</div>
+                </div>
+            </div>
+
+            <!-- Keyword Density Table -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Keyword Density Analysis</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keyword</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Count</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Density %</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SEO Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="keywordTable" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingSection" class="hidden text-center py-12">
+            <div class="inline-flex items-center justify-center w-12 h-12 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Analyzing keyword density...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorSection" class="hidden bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+            <div class="text-red-600 text-lg font-medium mb-2">Analysis Failed</div>
+            <p class="text-red-600" id="errorMessage"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('keywordForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Show loading, hide others
+    document.getElementById('loadingSection').classList.remove('hidden');
+    document.getElementById('resultsSection').classList.add('hidden');
+    document.getElementById('errorSection').classList.add('hidden');
+    
+    try {
+        const response = await fetch('/tools/keyword-density', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        document.getElementById('loadingSection').classList.add('hidden');
+        
+        if (data.success) {
+            displayResults(data);
+        } else {
+            showError(data.error || 'Analysis failed');
+        }
+    } catch (error) {
+        document.getElementById('loadingSection').classList.add('hidden');
+        showError('Network error occurred');
+    }
+});
+
+function displayResults(data) {
+    document.getElementById('totalWords').textContent = data.total_words.toLocaleString();
+    document.getElementById('uniqueWords').textContent = data.unique_words.toLocaleString();
+    document.getElementById('analysisDate').textContent = new Date(data.analysis_date).toLocaleDateString();
+    
+    const tableBody = document.getElementById('keywordTable');
+    tableBody.innerHTML = '';
+    
+    data.keyword_density.forEach(item => {
+        const row = document.createElement('tr');
+        let status = 'Optimal';
+        let statusClass = 'bg-green-100 text-green-800';
+        
+        if (item.density > 3) {
+            status = 'Too High';
+            statusClass = 'bg-red-100 text-red-800';
+        } else if (item.density < 0.5) {
+            status = 'Too Low';
+            statusClass = 'bg-yellow-100 text-yellow-800';
+        }
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.keyword}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.count}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.density}%</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">
+                    ${status}
+                </span>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    document.getElementById('resultsSection').classList.remove('hidden');
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('errorSection').classList.remove('hidden');
+}
+</script>
+{% endblock %}

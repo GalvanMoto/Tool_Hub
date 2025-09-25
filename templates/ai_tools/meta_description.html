@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Meta Description Generator - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            AI Meta Description Generator
+            <span class="text-2xl">🔍</span>
+        </h1>
+        <p class="text-xl text-gray-600">
+            Create SEO-optimized meta descriptions that boost click-through rates
+        </p>
+    </div>
+
+    <!-- Usage Counter -->
+    {% if current_user.is_authenticated %}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            {% if current_user.is_premium() %}
+                <p class="text-blue-800 font-medium">✨ Premium User - Unlimited Access</p>
+            {% else %}
+                <p class="text-blue-800 font-medium">📊 Daily Usage: Checking...</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Meta Description Form -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <form id="metaForm" class="space-y-6">
+            <!-- Page Title -->
+            <div>
+                <label for="page_title" class="block text-sm font-medium text-gray-700 mb-2">
+                    Page Title *
+                </label>
+                <input type="text" 
+                       id="page_title" 
+                       name="page_title" 
+                       required
+                       placeholder="e.g., Best SEO Tools for Small Business"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Page Content Summary -->
+            <div>
+                <label for="content_summary" class="block text-sm font-medium text-gray-700 mb-2">
+                    Content Summary *
+                </label>
+                <textarea id="content_summary" 
+                         name="content_summary" 
+                         required
+                         rows="4"
+                         placeholder="Briefly describe what your page is about, its main value proposition, and what visitors will learn or get..."
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+            </div>
+
+            <!-- Target Keywords -->
+            <div>
+                <label for="keywords" class="block text-sm font-medium text-gray-700 mb-2">
+                    Target Keywords *
+                </label>
+                <input type="text" 
+                       id="keywords" 
+                       name="keywords" 
+                       required
+                       placeholder="e.g., SEO tools, small business SEO, keyword research"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <p class="text-sm text-gray-500 mt-1">Separate keywords with commas</p>
+            </div>
+
+            <!-- Industry/Niche -->
+            <div>
+                <label for="industry" class="block text-sm font-medium text-gray-700 mb-2">
+                    Industry/Niche (Optional)
+                </label>
+                <input type="text" 
+                       id="industry" 
+                       name="industry" 
+                       placeholder="e.g., Digital Marketing, E-commerce, SaaS"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- CTA Type -->
+            <div>
+                <label for="cta_type" class="block text-sm font-medium text-gray-700 mb-2">
+                    Call-to-Action Style
+                </label>
+                <select id="cta_type" 
+                        name="cta_type"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="learn">Learn More</option>
+                    <option value="discover">Discover/Find Out</option>
+                    <option value="get">Get/Download</option>
+                    <option value="start">Start/Begin</option>
+                    <option value="buy">Buy/Shop</option>
+                    <option value="read">Read/Explore</option>
+                    <option value="none">No Specific CTA</option>
+                </select>
+            </div>
+
+            <!-- Number of Variations -->
+            <div>
+                <label for="count" class="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Variations
+                </label>
+                <select id="count" 
+                        name="count"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="3">3 Variations</option>
+                    <option value="5" selected>5 Variations</option>
+                    <option value="8">8 Variations</option>
+                    <option value="10">10 Variations</option>
+                </select>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" 
+                    id="generateBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🔍</span>
+                <span>Generate Meta Descriptions</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="hidden bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="text-blue-600 mr-2">📝</span>
+            Generated Meta Descriptions
+        </h2>
+        
+        <!-- SEO Tips -->
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <h3 class="text-sm font-semibold text-green-800 mb-2">💡 SEO Tips</h3>
+            <ul class="text-sm text-green-700 space-y-1">
+                <li>• Keep meta descriptions between 150-160 characters</li>
+                <li>• Include your main keyword naturally</li>
+                <li>• Make it compelling and action-oriented</li>
+                <li>• Avoid duplicate meta descriptions across pages</li>
+            </ul>
+        </div>
+
+        <!-- Meta Descriptions List -->
+        <div id="metaList" class="space-y-4 mb-6"></div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="copyAllMetas()" 
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>📋</span>
+                <span>Copy All</span>
+            </button>
+            <button onclick="generateMore()" 
+                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🔄</span>
+                <span>Generate More</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p class="mt-4 text-gray-600">Generating SEO-optimized meta descriptions...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <h3 class="text-lg font-semibold text-red-800 mb-2">Error</h3>
+        <p class="text-red-600" id="errorMessage"></p>
+        <button onclick="generateMore()" 
+                class="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            Try Again
+        </button>
+    </div>
+</div>
+
+<script>
+let currentMetas = [];
+
+// Form submission
+document.getElementById('metaForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const pageTitle = document.getElementById('page_title').value.trim();
+    const contentSummary = document.getElementById('content_summary').value.trim();
+    const keywords = document.getElementById('keywords').value.trim();
+    const industry = document.getElementById('industry').value.trim();
+    const ctaType = document.getElementById('cta_type').value;
+    const count = document.getElementById('count').value;
+    
+    if (!pageTitle || !contentSummary || !keywords) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    // Show loading, hide other sections
+    document.getElementById('loading').classList.remove('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+
+    try {
+        const response = await fetch('{{ url_for("ai_tools.ai_generate") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tool_type: 'meta_description',
+                page_title: pageTitle,
+                content_summary: contentSummary,
+                keywords: keywords,
+                industry: industry,
+                cta_type: ctaType,
+                count: parseInt(count)
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayResults(data.result);
+        } else {
+            showError(data.error || 'Failed to generate meta descriptions');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Network error. Please try again.');
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
+    }
+});
+
+function displayResults(result) {
+    // Parse meta descriptions from result
+    let metas = [];
+    if (typeof result === 'string') {
+        metas = result.split('\n').filter(line => line.trim()).map(line => line.replace(/^\d+\.\s*/, ''));
+    } else if (Array.isArray(result)) {
+        metas = result;
+    } else if (result.descriptions) {
+        metas = result.descriptions;
+    }
+    
+    currentMetas = metas;
+    
+    const metaList = document.getElementById('metaList');
+    metaList.innerHTML = '';
+    
+    metas.forEach((meta, index) => {
+        const charCount = meta.trim().length;
+        const isOptimal = charCount >= 140 && charCount <= 160;
+        const statusColor = isOptimal ? 'green' : charCount < 140 ? 'yellow' : 'red';
+        const statusText = isOptimal ? 'Optimal length' : charCount < 140 ? 'Too short' : 'Too long';
+        
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'group border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors';
+        metaDiv.innerHTML = `
+            <div class="space-y-3">
+                <div class="flex items-start justify-between">
+                    <span class="bg-blue-100 text-blue-600 text-sm font-medium px-2 py-1 rounded-full">${index + 1}</span>
+                    <button onclick="copyMeta('${meta.replace(/'/g, "\\'")}', ${index})" 
+                            class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <p class="text-gray-800 leading-relaxed">${meta.trim()}</p>
+                
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">${charCount} characters</span>
+                    <span class="px-2 py-1 rounded-full text-xs font-medium 
+                        ${statusColor === 'green' ? 'bg-green-100 text-green-700' : 
+                          statusColor === 'yellow' ? 'bg-yellow-100 text-yellow-700' : 
+                          'bg-red-100 text-red-700'}">
+                        ${statusText}
+                    </span>
+                </div>
+            </div>
+        `;
+        metaList.appendChild(metaDiv);
+    });
+    
+    document.getElementById('results').classList.remove('hidden');
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('error').classList.remove('hidden');
+}
+
+function generateMore() {
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('page_title').focus();
+}
+
+function copyMeta(meta, index) {
+    navigator.clipboard.writeText(meta).then(function() {
+        // Show temporary feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+        }, 1500);
+    }, function(err) {
+        console.error('Could not copy meta description: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+
+function copyAllMetas() {
+    const allMetas = currentMetas.join('\n\n');
+    navigator.clipboard.writeText(allMetas).then(function() {
+        // Temporarily change button text
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span>✓</span><span>Copied All!</span>';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    }, function(err) {
+        console.error('Could not copy meta descriptions: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+</script>
+{% endblock %}

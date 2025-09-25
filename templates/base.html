@@ -1,0 +1,216 @@
+<!-- Base template for ToolHub -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ToolHub{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('main.index') }}" class="flex items-center space-x-2">
+                        <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                            <span class="text-lg font-bold">T</span>
+                        </div>
+                        <span class="text-xl font-bold text-indigo-600 hidden sm:block">ToolHub</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="{{ url_for('main.tools') }}" class="flex items-center px-3 py-2 rounded-md text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-colors">
+                        <span class="mr-2">🛠️</span>
+                        <span>All Tools</span>
+                    </a>
+                    <a href="{{ url_for('tools.seo_tools_dashboard') }}" class="flex items-center px-3 py-2 rounded-md text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+                        <span class="mr-2">🔍</span>
+                        <span>SEO Tools</span>
+                    </a>
+                    <a href="{{ url_for('ai_tools.dashboard') }}" class="flex items-center px-3 py-2 rounded-md text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-colors">
+                        <span class="mr-2">🤖</span>
+                        <span>AI Tools</span>
+                    </a>
+                    <a href="{{ url_for('main.pricing') }}" class="flex items-center px-3 py-2 rounded-md text-gray-600 hover:text-green-600 hover:bg-green-50 transition-colors">
+                        <span class="mr-2">💎</span>
+                        <span>Pricing</span>
+                    </a>
+                    <a href="{{ url_for('main.blog') }}" class="flex items-center px-3 py-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+                        <span class="mr-2">📝</span>
+                        <span>Blog</span>
+                    </a>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-3">
+                    {% if current_user.is_authenticated %}
+                        <!-- Usage Counter (for free users) -->
+                        {% if not current_user.is_premium() %}
+                            <div class="hidden sm:flex items-center bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs">
+                                <span class="mr-1">⚡</span>
+                                {{ current_user.get_daily_usage_count() }}/3 today
+                            </div>
+                        {% endif %}
+
+                        <!-- User Dropdown -->
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors">
+                                <div class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold">
+                                    {{ current_user.username[0].upper() }}
+                                </div>
+                                <span class="hidden sm:block text-gray-700 font-medium">{{ current_user.username }}</span>
+                                {% if current_user.is_premium() %}
+                                    <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-2 py-1 rounded-full text-xs font-bold">✨ PRO</span>
+                                {% endif %}
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <div class="py-1">
+                                    <a href="{{ url_for('auth.profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">
+                                        <span class="mr-3">👤</span>
+                                        Profile & Settings
+                                    </a>
+                                    <a href="{{ url_for('ai_tools.dashboard') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600">
+                                        <span class="mr-3">🤖</span>
+                                        My AI Tools
+                                    </a>
+                                    {% if not current_user.is_premium() %}
+                                        <a href="{{ url_for('main.pricing') }}" class="flex items-center px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-50 hover:text-yellow-600">
+                                            <span class="mr-3">⭐</span>
+                                            Upgrade to Pro
+                                        </a>
+                                    {% endif %}
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        <span class="mr-3">🚪</span>
+                                        Sign Out
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Guest User Actions -->
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ url_for('auth.login') }}" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md transition-colors">
+                                Login
+                            </a>
+                            <a href="{{ url_for('auth.register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+                                Get Started
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <!-- Mobile Menu Button -->
+                    <button class="md:hidden bg-gray-100 p-2 rounded-md" onclick="toggleMobileMenu()">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu -->
+            <div id="mobileMenu" class="md:hidden hidden border-t border-gray-200 bg-white">
+                <div class="py-2 space-y-1">
+                    <a href="{{ url_for('main.tools') }}" class="flex items-center px-4 py-2 text-gray-600 hover:bg-orange-50 hover:text-orange-600">
+                        <span class="mr-3">🛠️</span>
+                        All Tools
+                    </a>
+                    <a href="{{ url_for('tools.seo_tools_dashboard') }}" class="flex items-center px-4 py-2 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600">
+                        <span class="mr-3">🔍</span>
+                        SEO Tools
+                    </a>
+                    <a href="{{ url_for('ai_tools.dashboard') }}" class="flex items-center px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600">
+                        <span class="mr-3">🤖</span>
+                        AI Tools
+                    </a>
+                    <a href="{{ url_for('main.pricing') }}" class="flex items-center px-4 py-2 text-gray-600 hover:bg-green-50 hover:text-green-600">
+                        <span class="mr-3">💎</span>
+                        Pricing
+                    </a>
+                    <a href="{{ url_for('main.blog') }}" class="flex items-center px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                        <span class="mr-3">📝</span>
+                        Blog
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu JavaScript -->
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} bg-{% if category == 'error' %}red{% else %}green{% endif %}-100 border border-{% if category == 'error' %}red{% else %}green{% endif %}-400 text-{% if category == 'error' %}red{% else %}green{% endif %}-700 px-4 py-3 rounded mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">ToolHub</h3>
+                    <p class="text-gray-300">Your one-stop platform for productivity tools.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Tools</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="/tools/pdf-merge" class="hover:text-white">PDF Merge</a></li>
+                        <li><a href="/tools/image-resizer" class="hover:text-white">Image Resizer</a></li>
+                        <li><a href="/tools/qr-generator" class="hover:text-white">QR Generator</a></li>
+                        <li><a href="/tools/qr-generator-pro" class="hover:text-white">Pro QR Generator</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="/about" class="hover:text-white">About</a></li>
+                        <li><a href="/contact" class="hover:text-white">Contact</a></li>
+                        <li><a href="/privacy" class="hover:text-white">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="/help" class="hover:text-white">Help Center</a></li>
+                        <li><a href="/guides" class="hover:text-white">Guides</a></li>
+                        <li><a href="/contact" class="hover:text-white">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>&copy; 2025 ToolHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

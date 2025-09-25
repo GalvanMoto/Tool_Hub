@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ user.first_name or user.username }}!</h1>
+        <p class="text-gray-600 mt-2">Manage your account and explore productivity tools.</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Tools Used</h3>
+                    <p class="text-2xl font-bold text-indigo-600">{{ user.tool_usage|length }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Subscription</h3>
+                    <p class="text-2xl font-bold text-green-600">{{ user.subscription_type.value.title() }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Member Since</h3>
+                    <p class="text-lg font-semibold text-yellow-600">{{ user.created_at.strftime('%b %Y') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow mb-8">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">Quick Actions</h2>
+        </div>
+        <div class="p-6">
+            <div class="grid md:grid-cols-3 gap-4">
+                <a href="/tools/pdf-merge" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <span class="text-2xl mr-3">📄</span>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Merge PDFs</h3>
+                        <p class="text-sm text-gray-500">Combine PDF files</p>
+                    </div>
+                </a>
+                <a href="/tools/image-resizer" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <span class="text-2xl mr-3">🖼️</span>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Resize Images</h3>
+                        <p class="text-sm text-gray-500">Optimize image sizes</p>
+                    </div>
+                </a>
+                <a href="/tools/qr-generator" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <span class="text-2xl mr-3">📱</span>
+                    <div>
+                        <h3 class="font-medium text-gray-900">QR Codes</h3>
+                        <p class="text-sm text-gray-500">Generate QR codes</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-900">Recent Activity</h2>
+            </div>
+            <div class="p-6">
+                {% if user.tool_usage %}
+                    <div class="space-y-4">
+                        {% for usage in user.tool_usage[:5] %}
+                        <div class="flex items-center justify-between py-2">
+                            <div class="flex items-center">
+                                <span class="text-lg mr-3">{{ usage.tool.icon or '🔧' }}</span>
+                                <div>
+                                    <p class="font-medium text-gray-900">{{ usage.tool.name }}</p>
+                                    <p class="text-sm text-gray-500">{{ usage.created_at.strftime('%b %d, %Y at %I:%M %p') }}</p>
+                                </div>
+                            </div>
+                            <span class="text-xs px-2 py-1 bg-{{ 'green' if usage.success else 'red' }}-100 text-{{ 'green' if usage.success else 'red' }}-800 rounded-full">
+                                {{ 'Success' if usage.success else 'Failed' }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-center py-8">No recent activity. Start using tools to see your history here!</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Account Info -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-900">Account Information</h2>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Name</label>
+                    <p class="text-gray-900">{{ user.full_name }}</p>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Email</label>
+                    <p class="text-gray-900">{{ user.email }}</p>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Username</label>
+                    <p class="text-gray-900">{{ user.username }}</p>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Subscription</label>
+                    <p class="text-gray-900">{{ user.subscription_type.value.title() }} Plan</p>
+                </div>
+                <div class="pt-4">
+                    <a href="{{ url_for('auth.profile') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

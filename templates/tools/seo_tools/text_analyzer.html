@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% block title %}Text Analyzer{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-xl mb-4">
+                <span class="text-2xl">📊</span>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent mb-2">Text Analyzer</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Comprehensive text statistics and word analysis</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <form id="textForm">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Text Content</label>
+                    <textarea name="content" rows="12" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Paste or type your text here for detailed analysis..."></textarea>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gradient-to-r from-blue-600 to-teal-600 text-white py-3 rounded-lg hover:shadow-lg transition-all">Analyze Text</button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden space-y-8">
+            <!-- Basic Statistics -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-blue-600" id="characterCount">0</div>
+                    <div class="text-gray-600 text-sm">Characters</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-cyan-600" id="characterCountNoSpaces">0</div>
+                    <div class="text-gray-600 text-sm">Characters (no spaces)</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-teal-600" id="wordCount">0</div>
+                    <div class="text-gray-600 text-sm">Words</div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100">
+                    <div class="text-3xl font-bold text-green-600" id="sentenceCount">0</div>
+                    <div class="text-gray-600 text-sm">Sentences</div>
+                </div>
+            </div>
+
+            <!-- Detailed Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Text Metrics -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">📏 Text Metrics</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Paragraphs</span>
+                            <span class="text-lg font-semibold text-blue-600" id="paragraphCount">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Unique Words</span>
+                            <span class="text-lg font-semibold text-cyan-600" id="uniqueWordCount">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Avg. Words/Sentence</span>
+                            <span class="text-lg font-semibold text-teal-600" id="avgWordsPerSentence">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Avg. Chars/Word</span>
+                            <span class="text-lg font-semibold text-green-600" id="avgCharsPerWord">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Analysis Date</span>
+                            <span class="text-lg font-semibold text-gray-600" id="analysisDate">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reading Time Estimates -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">⏱️ Reading Time</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Slow Reader (150 wpm)</span>
+                            <span class="text-lg font-semibold text-blue-600" id="readingTimeSlow">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Average Reader (250 wpm)</span>
+                            <span class="text-lg font-semibold text-cyan-600" id="readingTimeAverage">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Fast Reader (350 wpm)</span>
+                            <span class="text-lg font-semibold text-teal-600" id="readingTimeFast">-</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Speaking (130 wpm)</span>
+                            <span class="text-lg font-semibold text-green-600" id="speakingTime">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Most Common Words -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">🔤 Most Common Words</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Word</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Count</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Frequency</th>
+                            </tr>
+                        </thead>
+                        <tbody id="commonWordsTable" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Text Insights -->
+            <div class="bg-gradient-to-r from-blue-50 to-teal-50 rounded-2xl p-8 border border-blue-200">
+                <h3 class="text-xl font-bold text-blue-800 mb-4">💡 Text Insights</h3>
+                <div id="textInsights" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingSection" class="hidden text-center py-12">
+            <div class="inline-flex items-center justify-center w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Analyzing text...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorSection" class="hidden bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+            <div class="text-red-600 text-lg font-medium mb-2">Analysis Failed</div>
+            <p class="text-red-600" id="errorMessage"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('textForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Show loading, hide others
+    document.getElementById('loadingSection').classList.remove('hidden');
+    document.getElementById('resultsSection').classList.add('hidden');
+    document.getElementById('errorSection').classList.add('hidden');
+    
+    try {
+        const response = await fetch('/tools/text-analyzer', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        document.getElementById('loadingSection').classList.add('hidden');
+        
+        if (data.success) {
+            displayResults(data);
+        } else {
+            showError(data.error || 'Analysis failed');
+        }
+    } catch (error) {
+        document.getElementById('loadingSection').classList.add('hidden');
+        showError('Network error occurred');
+    }
+});
+
+function displayResults(data) {
+    document.getElementById('characterCount').textContent = data.character_count.toLocaleString();
+    document.getElementById('characterCountNoSpaces').textContent = data.character_count_no_spaces.toLocaleString();
+    document.getElementById('wordCount').textContent = data.word_count.toLocaleString();
+    document.getElementById('sentenceCount').textContent = data.sentence_count.toLocaleString();
+    document.getElementById('paragraphCount').textContent = data.paragraph_count.toLocaleString();
+    document.getElementById('uniqueWordCount').textContent = data.unique_word_count.toLocaleString();
+    document.getElementById('avgWordsPerSentence').textContent = data.avg_words_per_sentence;
+    document.getElementById('avgCharsPerWord').textContent = data.avg_chars_per_word;
+    document.getElementById('analysisDate').textContent = new Date(data.analysis_date).toLocaleDateString();
+    
+    // Calculate reading times
+    const wordCount = data.word_count;
+    document.getElementById('readingTimeSlow').textContent = formatTime(wordCount / 150);
+    document.getElementById('readingTimeAverage').textContent = formatTime(wordCount / 250);
+    document.getElementById('readingTimeFast').textContent = formatTime(wordCount / 350);
+    document.getElementById('speakingTime').textContent = formatTime(wordCount / 130);
+    
+    // Populate most common words table
+    const tableBody = document.getElementById('commonWordsTable');
+    tableBody.innerHTML = '';
+    
+    data.most_common_words.forEach((word, index) => {
+        const row = document.createElement('tr');
+        const frequency = ((word.count / data.word_count) * 100).toFixed(2);
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#${index + 1}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">${word.word}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${word.count}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${frequency}%</td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    // Generate insights
+    const insights = generateTextInsights(data);
+    const insightsContainer = document.getElementById('textInsights');
+    insightsContainer.innerHTML = '';
+    
+    insights.forEach(insight => {
+        const insightElement = document.createElement('div');
+        insightElement.className = 'bg-white rounded-lg p-4 border border-blue-200';
+        insightElement.innerHTML = `
+            <div class="flex items-start space-x-3">
+                <div class="text-blue-600 text-lg">${insight.icon}</div>
+                <div>
+                    <div class="text-sm font-medium text-gray-900">${insight.title}</div>
+                    <div class="text-sm text-gray-600 mt-1">${insight.description}</div>
+                </div>
+            </div>
+        `;
+        insightsContainer.appendChild(insightElement);
+    });
+    
+    document.getElementById('resultsSection').classList.remove('hidden');
+}
+
+function formatTime(minutes) {
+    if (minutes < 1) {
+        return Math.ceil(minutes * 60) + 's';
+    } else if (minutes < 60) {
+        return Math.ceil(minutes) + 'm';
+    } else {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = Math.ceil(minutes % 60);
+        return hours + 'h ' + remainingMinutes + 'm';
+    }
+}
+
+function generateTextInsights(data) {
+    const insights = [];
+    
+    // Text length assessment
+    if (data.word_count < 300) {
+        insights.push({
+            icon: '📝',
+            title: 'Short Content',
+            description: 'This is a short piece of content, ideal for social media or quick reads.'
+        });
+    } else if (data.word_count > 2000) {
+        insights.push({
+            icon: '📚',
+            title: 'Long-form Content',
+            description: 'This is substantial long-form content, great for in-depth articles or guides.'
+        });
+    }
+    
+    // Sentence length analysis
+    if (data.avg_words_per_sentence > 25) {
+        insights.push({
+            icon: '✂️',
+            title: 'Long Sentences',
+            description: 'Consider breaking up some longer sentences for better readability.'
+        });
+    } else if (data.avg_words_per_sentence < 10) {
+        insights.push({
+            icon: '🎯',
+            title: 'Concise Writing',
+            description: 'Your sentences are nice and concise, making the text easy to follow.'
+        });
+    }
+    
+    // Word complexity
+    if (data.avg_chars_per_word > 6) {
+        insights.push({
+            icon: '🔤',
+            title: 'Complex Vocabulary',
+            description: 'You use sophisticated vocabulary. Consider simpler alternatives for broader appeal.'
+        });
+    }
+    
+    // Vocabulary diversity
+    const diversityRatio = data.unique_word_count / data.word_count;
+    if (diversityRatio > 0.7) {
+        insights.push({
+            icon: '🌈',
+            title: 'Rich Vocabulary',
+            description: 'Excellent vocabulary diversity! Your writing uses a wide range of words.'
+        });
+    } else if (diversityRatio < 0.4) {
+        insights.push({
+            icon: '🔄',
+            title: 'Repetitive Language',
+            description: 'Consider using more varied vocabulary to make your writing more engaging.'
+        });
+    }
+    
+    return insights.slice(0, 4); // Limit to 4 insights
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('errorSection').classList.remove('hidden');
+}
+</script>
+{% endblock %}

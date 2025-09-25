@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Ad Copy Generator - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            AI Ad Copy Generator
+            <span class="text-2xl">📢</span>
+        </h1>
+        <p class="text-xl text-gray-600">
+            Create high-converting ad copy that drives clicks and sales
+        </p>
+    </div>
+
+    <!-- Usage Counter -->
+    {% if current_user.is_authenticated %}
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            {% if current_user.is_premium() %}
+                <p class="text-blue-800 font-medium">✨ Premium User - Unlimited Access</p>
+            {% else %}
+                <p class="text-blue-800 font-medium">📊 Daily Usage: Checking...</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Ad Copy Form -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <form id="adForm" class="space-y-6">
+            <!-- Product/Service -->
+            <div>
+                <label for="product" class="block text-sm font-medium text-gray-700 mb-2">
+                    Product or Service *
+                </label>
+                <input type="text" 
+                       id="product" 
+                       name="product" 
+                       required
+                       placeholder="e.g., AI Marketing Tool, Fitness Course, Wireless Headphones"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Key Benefits -->
+            <div>
+                <label for="benefits" class="block text-sm font-medium text-gray-700 mb-2">
+                    Key Benefits & Features *
+                </label>
+                <textarea id="benefits" 
+                         name="benefits" 
+                         required
+                         rows="3"
+                         placeholder="What makes your product/service special? What problems does it solve? What benefits do customers get?"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"></textarea>
+            </div>
+
+            <!-- Target Audience -->
+            <div>
+                <label for="audience" class="block text-sm font-medium text-gray-700 mb-2">
+                    Target Audience *
+                </label>
+                <input type="text" 
+                       id="audience" 
+                       name="audience" 
+                       required
+                       placeholder="e.g., Small business owners, Fitness enthusiasts, Tech-savvy millennials"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Ad Platform -->
+            <div>
+                <label for="platform" class="block text-sm font-medium text-gray-700 mb-2">
+                    Advertising Platform
+                </label>
+                <select id="platform" 
+                        name="platform"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <option value="google">Google Ads</option>
+                    <option value="facebook">Facebook/Instagram Ads</option>
+                    <option value="linkedin">LinkedIn Ads</option>
+                    <option value="twitter">Twitter/X Ads</option>
+                    <option value="youtube">YouTube Ads</option>
+                    <option value="tiktok">TikTok Ads</option>
+                    <option value="print">Print/Display</option>
+                    <option value="email">Email Marketing</option>
+                    <option value="general">General Purpose</option>
+                </select>
+            </div>
+
+            <!-- Ad Type -->
+            <div>
+                <label for="ad_type" class="block text-sm font-medium text-gray-700 mb-2">
+                    Ad Type
+                </label>
+                <select id="ad_type" 
+                        name="ad_type"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <option value="headline">Headlines Only</option>
+                    <option value="description">Description/Body Text</option>
+                    <option value="complete">Complete Ad (Headline + Description)</option>
+                    <option value="cta">Call-to-Action Focus</option>
+                    <option value="promotional">Promotional/Sale</option>
+                    <option value="awareness">Brand Awareness</option>
+                </select>
+            </div>
+
+            <!-- Tone -->
+            <div>
+                <label for="tone" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tone & Style
+                </label>
+                <select id="tone" 
+                        name="tone"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <option value="persuasive">Persuasive & Compelling</option>
+                    <option value="urgent">Urgent & Action-Oriented</option>
+                    <option value="friendly">Friendly & Approachable</option>
+                    <option value="professional">Professional & Trustworthy</option>
+                    <option value="emotional">Emotional & Inspiring</option>
+                    <option value="humorous">Humorous & Fun</option>
+                    <option value="luxurious">Luxurious & Premium</option>
+                    <option value="scientific">Scientific & Evidence-Based</option>
+                </select>
+            </div>
+
+            <!-- Call to Action -->
+            <div>
+                <label for="cta_goal" class="block text-sm font-medium text-gray-700 mb-2">
+                    Primary Goal/CTA
+                </label>
+                <select id="cta_goal" 
+                        name="cta_goal"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <option value="buy">Buy Now/Purchase</option>
+                    <option value="signup">Sign Up/Register</option>
+                    <option value="learn">Learn More/Get Info</option>
+                    <option value="download">Download/Get Free</option>
+                    <option value="trial">Start Free Trial</option>
+                    <option value="contact">Contact Us/Get Quote</option>
+                    <option value="visit">Visit Website/Store</option>
+                    <option value="subscribe">Subscribe/Follow</option>
+                    <option value="share">Share/Refer</option>
+                </select>
+            </div>
+
+            <!-- Special Offer -->
+            <div>
+                <label for="offer" class="block text-sm font-medium text-gray-700 mb-2">
+                    Special Offer or Incentive
+                </label>
+                <input type="text" 
+                       id="offer" 
+                       name="offer" 
+                       placeholder="e.g., 50% off, Free shipping, Limited time, Buy one get one"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Keywords -->
+            <div>
+                <label for="keywords" class="block text-sm font-medium text-gray-700 mb-2">
+                    Keywords to Include
+                </label>
+                <input type="text" 
+                       id="keywords" 
+                       name="keywords" 
+                       placeholder="e.g., AI, automation, productivity, results"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+
+            <!-- Number of Variations -->
+            <div>
+                <label for="count" class="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Ad Variations
+                </label>
+                <select id="count" 
+                        name="count"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <option value="3">3 Variations</option>
+                    <option value="5" selected>5 Variations</option>
+                    <option value="8">8 Variations</option>
+                    <option value="10">10 Variations</option>
+                </select>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" 
+                    id="generateBtn"
+                    class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🚀</span>
+                <span>Generate Ad Copy</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="hidden bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="text-orange-600 mr-2">📢</span>
+            Generated Ad Copy
+        </h2>
+        
+        <!-- Platform & Type Info -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium text-gray-600">Platform:</span>
+                    <span id="selectedPlatform" class="text-sm font-semibold text-gray-800"></span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium text-gray-600">Type:</span>
+                    <span id="selectedType" class="text-sm font-semibold text-gray-800"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Copies List -->
+        <div id="adsList" class="space-y-6 mb-6"></div>
+
+        <!-- Performance Tips -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h3 class="text-sm font-semibold text-blue-800 mb-2">💡 Optimization Tips</h3>
+            <ul class="text-sm text-blue-700 space-y-1">
+                <li>• A/B test different variations to see what performs best</li>
+                <li>• Use strong action words and create urgency when appropriate</li>
+                <li>• Include specific benefits rather than just features</li>
+                <li>• Match your ad copy tone to your target audience</li>
+                <li>• Test with and without special offers or incentives</li>
+            </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="copyAllAds()" 
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>📋</span>
+                <span>Copy All Ads</span>
+            </button>
+            <button onclick="generateMore()" 
+                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <span>🔄</span>
+                <span>Generate More</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+        <p class="mt-4 text-gray-600">Creating high-converting ad copy...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <h3 class="text-lg font-semibold text-red-800 mb-2">Error</h3>
+        <p class="text-red-600" id="errorMessage"></p>
+        <button onclick="generateMore()" 
+                class="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            Try Again
+        </button>
+    </div>
+</div>
+
+<script>
+let currentAds = [];
+
+// Form submission
+document.getElementById('adForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const product = document.getElementById('product').value.trim();
+    const benefits = document.getElementById('benefits').value.trim();
+    const audience = document.getElementById('audience').value.trim();
+    const platform = document.getElementById('platform').value;
+    const adType = document.getElementById('ad_type').value;
+    const tone = document.getElementById('tone').value;
+    const ctaGoal = document.getElementById('cta_goal').value;
+    const offer = document.getElementById('offer').value.trim();
+    const keywords = document.getElementById('keywords').value.trim();
+    const count = document.getElementById('count').value;
+    
+    if (!product || !benefits || !audience) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    // Show loading, hide other sections
+    document.getElementById('loading').classList.remove('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+
+    try {
+        const response = await fetch('{{ url_for("ai_tools.ai_generate") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tool_type: 'ad_copy',
+                product: product,
+                benefits: benefits,
+                audience: audience,
+                platform: platform,
+                ad_type: adType,
+                tone: tone,
+                cta_goal: ctaGoal,
+                offer: offer,
+                keywords: keywords,
+                count: parseInt(count)
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayResults(data.result, platform, adType);
+        } else {
+            showError(data.error || 'Failed to generate ad copy');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Network error. Please try again.');
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
+    }
+});
+
+function displayResults(result, platform, adType) {
+    // Parse ads from result
+    let ads = [];
+    if (typeof result === 'string') {
+        ads = result.split('\n\n').filter(ad => ad.trim()).map(ad => ad.replace(/^\d+\.\s*/, ''));
+    } else if (Array.isArray(result)) {
+        ads = result;
+    } else if (result.ads) {
+        ads = result.ads;
+    }
+    
+    currentAds = ads;
+    
+    // Update platform and type info
+    document.getElementById('selectedPlatform').textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+    document.getElementById('selectedType').textContent = adType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    
+    const adsList = document.getElementById('adsList');
+    adsList.innerHTML = '';
+    
+    ads.forEach((ad, index) => {
+        const wordCount = ad.trim().split(/\s+/).length;
+        const charCount = ad.trim().length;
+        
+        const adDiv = document.createElement('div');
+        adDiv.className = 'group border border-gray-200 rounded-lg p-6 hover:border-orange-300 transition-colors';
+        adDiv.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-orange-100 text-orange-600 text-sm font-medium px-3 py-1 rounded-full">Version ${index + 1}</span>
+                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                            <span>${wordCount} words</span>
+                            <span>${charCount} characters</span>
+                        </div>
+                    </div>
+                    <button onclick="copyAd('${ad.replace(/'/g, "\\'")}', ${index})" 
+                            class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="bg-gradient-to-br from-orange-50 to-yellow-50 border border-orange-200 rounded-lg p-4">
+                    <p class="text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">${ad.trim()}</p>
+                </div>
+                
+                <!-- Performance indicators -->
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center space-x-3">
+                        ${ad.includes('!') ? '<span class="bg-green-100 text-green-700 px-2 py-1 rounded-full">High Impact</span>' : ''}
+                        ${ad.toLowerCase().includes('free') || ad.toLowerCase().includes('save') ? '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Value Focus</span>' : ''}
+                        ${ad.toLowerCase().includes('now') || ad.toLowerCase().includes('today') ? '<span class="bg-red-100 text-red-700 px-2 py-1 rounded-full">Urgency</span>' : ''}
+                    </div>
+                    <div class="text-gray-500">
+                        ${getReadabilityScore(ad)} readability score
+                    </div>
+                </div>
+            </div>
+        `;
+        adsList.appendChild(adDiv);
+    });
+    
+    document.getElementById('results').classList.remove('hidden');
+}
+
+function getReadabilityScore(text) {
+    // Simple readability score based on sentence and word length
+    const sentences = text.split(/[.!?]+/).length - 1;
+    const words = text.split(/\s+/).length;
+    const avgWordsPerSentence = words / Math.max(sentences, 1);
+    
+    if (avgWordsPerSentence < 10) return "Excellent";
+    if (avgWordsPerSentence < 15) return "Good";
+    if (avgWordsPerSentence < 20) return "Fair";
+    return "Complex";
+}
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('error').classList.remove('hidden');
+}
+
+function generateMore() {
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('product').focus();
+}
+
+function copyAd(ad, index) {
+    navigator.clipboard.writeText(ad).then(function() {
+        // Show temporary feedback
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+        }, 1500);
+    }, function(err) {
+        console.error('Could not copy ad: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+
+function copyAllAds() {
+    const allAds = currentAds.map((ad, index) => 
+        `Version ${index + 1}:\n${ad}`
+    ).join('\n\n---\n\n');
+    
+    navigator.clipboard.writeText(allAds).then(function() {
+        // Temporarily change button text
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span>✓</span><span>Copied All!</span>';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    }, function(err) {
+        console.error('Could not copy ads: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+</script>
+{% endblock %}

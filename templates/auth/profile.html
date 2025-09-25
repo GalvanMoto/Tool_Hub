@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - ToolHub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto">
+            <!-- Profile Header -->
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-indigo-100 rounded-full p-4">
+                        <span class="text-2xl">👤</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ current_user.username }}</h1>
+                        <p class="text-gray-600">{{ current_user.email }}</p>
+                        <div class="flex items-center space-x-2 mt-2">
+                            {% if current_user.is_premium() %}
+                                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">✨ Premium User</span>
+                            {% else %}
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">🆓 Free User</span>
+                            {% endif %}
+                            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                                Member since {{ current_user.created_at.strftime('%B %Y') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Account Information -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Username</label>
+                            <p class="mt-1 text-sm text-gray-900">{{ current_user.username }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <p class="mt-1 text-sm text-gray-900">{{ current_user.email }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Account Type</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                {{ current_user.role.value }} 
+                                {% if current_user.plan_type %}
+                                    ({{ current_user.plan_type.value }})
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Last Login</label>
+                            <p class="mt-1 text-sm text-gray-900">
+                                {% if current_user.last_login %}
+                                    {{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}
+                                {% else %}
+                                    Never logged in before
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Statistics -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Usage Statistics</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Today's AI Tool Usage</span>
+                            <span class="text-lg font-semibold text-indigo-600">
+                                {{ current_user.get_daily_usage_count() }}
+                                {% if current_user.is_premium() %}
+                                    / Unlimited
+                                {% else %}
+                                    / 3
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        {% if not current_user.is_premium() %}
+                        <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+                            <p class="text-sm text-blue-800">
+                                <strong>Upgrade to Premium</strong> for unlimited AI tool usage, priority support, and exclusive features!
+                            </p>
+                            <a href="{{ url_for('main.pricing') }}" class="inline-block mt-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700">
+                                View Pricing Plans
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Security Settings</h2>
+                    <div class="space-y-4">
+                        <button class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+                            Change Password
+                        </button>
+                        <button class="w-full bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">
+                            Download Account Data
+                        </button>
+                        <button class="w-full bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+                            Delete Account
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="{{ url_for('tools.index') }}" class="flex items-center justify-center bg-blue-50 text-blue-700 px-4 py-3 rounded-md hover:bg-blue-100 transition-colors">
+                            <span class="mr-2">🔍</span>
+                            SEO Tools
+                        </a>
+                        <a href="{{ url_for('ai_tools.dashboard') }}" class="flex items-center justify-center bg-purple-50 text-purple-700 px-4 py-3 rounded-md hover:bg-purple-100 transition-colors">
+                            <span class="mr-2">🤖</span>
+                            AI Tools
+                        </a>
+                        <a href="{{ url_for('main.blog') }}" class="flex items-center justify-center bg-green-50 text-green-700 px-4 py-3 rounded-md hover:bg-green-100 transition-colors">
+                            <span class="mr-2">📝</span>
+                            Blog
+                        </a>
+                        <a href="{{ url_for('main.pricing') }}" class="flex items-center justify-center bg-yellow-50 text-yellow-700 px-4 py-3 rounded-md hover:bg-yellow-100 transition-colors">
+                            <span class="mr-2">💎</span>
+                            Upgrade
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

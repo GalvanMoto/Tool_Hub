@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF Protect - ToolHub{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="text-6xl mb-4">🔐</div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">PDF Protect</h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Add password protection to your PDF files to keep sensitive information secure.
+        </p>
+    </div>
+
+    <!-- Tool Form -->
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <form id="pdfProtectForm" action="{{ url_for('tools.pdf_protect_process') }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="tool" value="protect">
+            
+            <!-- File Upload Section -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Select PDF File to Protect
+                </label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
+                    <div class="text-4xl mb-2">📄</div>
+                    <input type="file" name="files" accept=".pdf" required 
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <p class="mt-2 text-sm text-gray-500">Upload a PDF file (max 10MB)</p>
+                </div>
+            </div>
+
+            <!-- Password Input -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Set Password
+                </label>
+                <input type="password" name="pdf_password" required 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                       placeholder="Enter a strong password">
+                <p class="mt-1 text-sm text-gray-500">Choose a strong password with at least 8 characters</p>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm Password
+                </label>
+                <input type="password" name="confirm_password" required 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                       placeholder="Confirm your password">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                Protect PDF
+            </button>
+        </form>
+    </div>
+
+    <!-- Security Info -->
+    <div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="text-yellow-400 text-xl mr-3">⚠️</div>
+            <div>
+                <h3 class="font-medium text-yellow-800 mb-1">Important Security Note</h3>
+                <p class="text-sm text-yellow-700">
+                    Make sure to remember your password! If you lose it, you won't be able to open the protected PDF.
+                    Consider storing the password in a secure password manager.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">🛡️</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Strong Encryption</h3>
+            <p class="text-gray-600 text-sm">Uses industry-standard encryption to protect your documents.</p>
+        </div>
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">🔑</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Access Control</h3>
+            <p class="text-gray-600 text-sm">Only those with the password can view or modify the document.</p>
+        </div>
+        <div class="text-center p-6">
+            <div class="text-3xl mb-3">📱</div>
+            <h3 class="font-semibold text-gray-900 mb-2">Universal Protection</h3>
+            <p class="text-gray-600 text-sm">Protected PDFs work with all major PDF viewers and devices.</p>
+        </div>
+    </div>
+
+    <!-- Back to Tools -->
+    <div class="text-center mt-8">
+        <a href="{{ url_for('tools.index') }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-700">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to All Tools
+        </a>
+    </div>
+</div>
+
+<script>
+document.getElementById('pdfProtectForm').addEventListener('submit', function(e) {
+    const password = document.querySelector('input[name="pdf_password"]').value;
+    const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+    
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Passwords do not match. Please try again.');
+        return;
+    }
+    
+    if (password.length < 8) {
+        e.preventDefault();
+        alert('Password must be at least 8 characters long.');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Protecting PDF...';
+});
+</script>
+{% endblock %}

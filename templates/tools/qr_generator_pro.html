@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}Pro QR Code Generator - Advanced Customization - ToolHub{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 max-w-6xl mx-auto">
+  <h1 class="text-4xl font-bold mb-6 text-center text-indigo-600">Pro QR Code Generator</h1>
+  <p class="text-center text-gray-600 mb-10">
+    Create professional, customizable QR codes with advanced features, analytics, and dynamic editing.
+  </p>
+
+  <div class="grid lg:grid-cols-2 gap-8">
+    <!-- Form Section -->
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+      <form method="POST" action="{{ url_for('tools.qr_generator_pro_process') }}" enctype="multipart/form-data" class="space-y-6">
+        
+        <!-- QR Type Selection -->
+        <div>
+          <label class="block font-medium text-gray-700 mb-3">QR Code Type</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="qr-type-option">
+              <input type="radio" name="qr_type" value="url" checked class="sr-only">
+              <div class="p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
+                <div class="text-2xl mb-1">🌐</div>
+                <div class="font-medium">URL/Text</div>
+              </div>
+            </label>
+            <label class="qr-type-option">
+              <input type="radio" name="qr_type" value="wifi" class="sr-only">
+              <div class="p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
+                <div class="text-2xl mb-1">📶</div>
+                <div class="font-medium">WiFi</div>
+              </div>
+            </label>
+            <label class="qr-type-option">
+              <input type="radio" name="qr_type" value="vcard" class="sr-only">
+              <div class="p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
+                <div class="text-2xl mb-1">👤</div>
+                <div class="font-medium">vCard</div>
+              </div>
+            </label>
+            <label class="qr-type-option">
+              <input type="radio" name="qr_type" value="social" class="sr-only">
+              <div class="p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
+                <div class="text-2xl mb-1">📱</div>
+                <div class="font-medium">Social</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Dynamic Content Forms -->
+        <div id="url-form" class="qr-form-section">
+          <label for="data" class="block font-medium text-gray-700">Enter Text / URL</label>
+          <input type="text" id="data" name="data" placeholder="https://example.com"
+                 value="{{ request.form.get('data', '') }}"
+                 class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          <div class="mt-2">
+            <label class="flex items-center">
+              <input type="checkbox" name="dynamic" value="1" class="mr-2">
+              <span class="text-sm text-gray-600">Make dynamic (editable after creation) 
+                <span class="text-indigo-600 font-medium">PRO</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div id="wifi-form" class="qr-form-section hidden">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium text-gray-700">Network Name (SSID)</label>
+              <input type="text" name="wifi_ssid" placeholder="MyWiFi"
+                     class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700">Security Type</label>
+              <select name="wifi_security" class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                <option value="WPA">WPA/WPA2</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">Open (No Password)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Password</label>
+            <input type="text" name="wifi_password" placeholder="password123"
+                   class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+
+        <div id="vcard-form" class="qr-form-section hidden">
+          <div class="grid grid-cols-2 gap-4">
+            <input type="text" name="vcard_firstname" placeholder="First Name"
+                   class="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+            <input type="text" name="vcard_lastname" placeholder="Last Name"
+                   class="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <input type="text" name="vcard_company" placeholder="Company"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          <div class="grid grid-cols-2 gap-4">
+            <input type="email" name="vcard_email" placeholder="email@example.com"
+                   class="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+            <input type="tel" name="vcard_phone" placeholder="+1 234 567 8900"
+                   class="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+
+        <div id="social-form" class="qr-form-section hidden">
+          <div>
+            <label class="block font-medium text-gray-700">Social Platform</label>
+            <select name="social_platform" class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+              <option value="instagram">Instagram</option>
+              <option value="twitter">Twitter</option>
+              <option value="facebook">Facebook</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="tiktok">TikTok</option>
+              <option value="youtube">YouTube</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Username/Handle</label>
+            <input type="text" name="social_username" placeholder="@yourhandle"
+                   class="w-full mt-2 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+
+        <!-- Design Customization -->
+        <div class="border-t pt-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">🎨 Design Customization</h3>
+          
+          <!-- Colors -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block font-medium text-gray-700 mb-2">Foreground Color</label>
+              <div class="flex items-center space-x-2">
+                <input type="color" name="fg_color" value="#000000" 
+                       class="w-12 h-10 border rounded cursor-pointer">
+                <input type="text" name="fg_color_hex" value="#000000" 
+                       class="flex-1 p-2 border rounded text-sm">
+              </div>
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700 mb-2">Background Color</label>
+              <div class="flex items-center space-x-2">
+                <input type="color" name="bg_color" value="#FFFFFF" 
+                       class="w-12 h-10 border rounded cursor-pointer">
+                <input type="text" name="bg_color_hex" value="#FFFFFF" 
+                       class="flex-1 p-2 border rounded text-sm">
+              </div>
+            </div>
+          </div>
+
+          <!-- Logo Upload -->
+          <div class="mb-4">
+            <label class="block font-medium text-gray-700 mb-2">Center Logo 
+              <span class="text-indigo-600 font-medium">PRO</span>
+            </label>
+            <input type="file" name="logo" accept="image/*" 
+                   class="w-full p-2 border rounded-lg">
+            <p class="text-sm text-gray-500 mt-1">Upload PNG/JPG logo (recommended: square, max 2MB)</p>
+          </div>
+
+          <!-- Size and Format -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium text-gray-700 mb-2">Size (pixels)</label>
+              <select name="size" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                <option value="200">200x200</option>
+                <option value="300" selected>300x300</option>
+                <option value="400">400x400</option>
+                <option value="500">500x500 (PRO)</option>
+                <option value="800">800x800 (PRO)</option>
+                <option value="1000">1000x1000 (PRO)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700 mb-2">Download Format</label>
+              <select name="format" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                <option value="png">PNG</option>
+                <option value="svg">SVG (PRO)</option>
+                <option value="pdf">PDF (PRO)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Error Correction -->
+          <div class="mt-4">
+            <label class="block font-medium text-gray-700 mb-2">Error Correction Level</label>
+            <select name="error_correction" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+              <option value="L">Low (7%) - More data capacity</option>
+              <option value="M" selected>Medium (15%) - Balanced</option>
+              <option value="Q">Quartile (25%) - More error correction</option>
+              <option value="H">High (30%) - Maximum error correction</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-lg font-medium text-lg">
+          🚀 Generate Pro QR Code
+        </button>
+      </form>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Preview</h3>
+      
+      {% if qr_code %}
+      <div class="text-center">
+        <div class="bg-gray-50 p-6 rounded-lg inline-block mb-4">
+          <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="mx-auto shadow-lg rounded-lg">
+        </div>
+        
+        <div class="space-y-3">
+          <div class="flex flex-wrap gap-2 justify-center">
+            <a href="data:image/png;base64,{{ qr_code }}" download="qrcode.png"
+               class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+               📥 Download PNG
+            </a>
+            {% if qr_id %}
+            <button onclick="copyToClipboard('{{ request.url_root }}r/{{ qr_id }}')" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+               🔗 Copy Dynamic Link
+            </button>
+            {% endif %}
+            <button onclick="copyToClipboard('{{ qr_data }}')" 
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm">
+               📋 Copy Data
+            </button>
+          </div>
+          
+          <div class="text-sm text-gray-600 space-y-1">
+            <p><strong>Type:</strong> {{ data_type or 'Text' }}</p>
+            <p><strong>Size:</strong> {{ request.form.get('size', '300') }}x{{ request.form.get('size', '300') }}px</p>
+            {% if qr_id %}
+            <p><strong>Dynamic ID:</strong> {{ qr_id }}</p>
+            <p class="text-indigo-600">✨ This QR can be edited without changing the image!</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="text-center py-12 text-gray-500">
+        <div class="text-6xl mb-4">📱</div>
+        <p>Your QR code will appear here</p>
+        <p class="text-sm">Fill out the form and click generate</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Pro Features Section -->
+<section class="mt-20 bg-gradient-to-r from-indigo-50 to-purple-50 py-16 px-6">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold text-center text-indigo-600 mb-8">Pro QR Generator Features</h2>
+    
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-white p-6 rounded-xl shadow text-center">
+        <div class="text-4xl mb-4">🎨</div>
+        <h3 class="text-xl font-semibold mb-3">Advanced Customization</h3>
+        <ul class="text-sm text-gray-600 space-y-1">
+          <li>✅ Custom colors & logos</li>
+          <li>✅ Multiple output formats</li>
+          <li>✅ Professional designs</li>
+          <li>✅ High-resolution output</li>
+        </ul>
+      </div>
+      
+      <div class="bg-white p-6 rounded-xl shadow text-center">
+        <div class="text-4xl mb-4">🔄</div>
+        <h3 class="text-xl font-semibold mb-3">Dynamic QR Codes</h3>
+        <ul class="text-sm text-gray-600 space-y-1">
+          <li>✅ Edit destination without reprinting</li>
+          <li>✅ Track scan analytics</li>
+          <li>✅ Redirect management</li>
+          <li>✅ Link expiration control</li>
+        </ul>
+      </div>
+      
+      <div class="bg-white p-6 rounded-xl shadow text-center">
+        <div class="text-4xl mb-4">📊</div>
+        <h3 class="text-xl font-semibold mb-3">Analytics & Insights</h3>
+        <ul class="text-sm text-gray-600 space-y-1">
+          <li>✅ Scan count tracking</li>
+          <li>✅ Geographic data</li>
+          <li>✅ Device & browser info</li>
+          <li>✅ Time-based reports</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="text-center mt-8">
+      <a href="/pricing" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-medium text-lg">
+        🚀 Upgrade to Pro
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+// QR Type Selection
+document.addEventListener('DOMContentLoaded', function() {
+  const qrTypeInputs = document.querySelectorAll('input[name="qr_type"]');
+  const qrForms = document.querySelectorAll('.qr-form-section');
+  
+  qrTypeInputs.forEach(input => {
+    input.addEventListener('change', function() {
+      // Hide all forms
+      qrForms.forEach(form => form.classList.add('hidden'));
+      
+      // Show selected form
+      const selectedForm = document.getElementById(this.value + '-form');
+      if (selectedForm) {
+        selectedForm.classList.remove('hidden');
+      }
+      
+      // Update visual selection
+      document.querySelectorAll('.qr-type-option div').forEach(div => {
+        div.classList.remove('border-indigo-500', 'bg-indigo-50');
+        div.classList.add('border-gray-200');
+      });
+      
+      this.parentElement.querySelector('div').classList.add('border-indigo-500', 'bg-indigo-50');
+      this.parentElement.querySelector('div').classList.remove('border-gray-200');
+    });
+  });
+  
+  // Color picker sync
+  const fgColor = document.querySelector('input[name="fg_color"]');
+  const fgColorHex = document.querySelector('input[name="fg_color_hex"]');
+  const bgColor = document.querySelector('input[name="bg_color"]');
+  const bgColorHex = document.querySelector('input[name="bg_color_hex"]');
+  
+  if (fgColor && fgColorHex) {
+    fgColor.addEventListener('input', () => fgColorHex.value = fgColor.value);
+    fgColorHex.addEventListener('input', () => fgColor.value = fgColorHex.value);
+  }
+  
+  if (bgColor && bgColorHex) {
+    bgColor.addEventListener('input', () => bgColorHex.value = bgColor.value);
+    bgColorHex.addEventListener('input', () => bgColor.value = bgColorHex.value);
+  }
+
+  // Handle form submission
+  const form = document.querySelector('form');
+  const previewSection = document.getElementById('qr-preview-section');
+  
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = '🔄 Generating...';
+    submitButton.disabled = true;
+    
+    try {
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Show the QR code
+        showQRResult(result);
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      alert('Error generating QR code: ' + error.message);
+    } finally {
+      submitButton.textContent = originalText;
+      submitButton.disabled = false;
+    }
+  });
+});
+
+function showQRResult(result) {
+  const previewSection = document.getElementById('qr-preview-section');
+  if (!previewSection) return;
+  
+  previewSection.innerHTML = `
+    <div class="text-center">
+      <h3 class="text-lg font-semibold mb-4">Your Pro QR Code</h3>
+      <div class="bg-white p-4 rounded-lg inline-block mb-4">
+        <img src="data:image/png;base64,${result.qr_code}" alt="Generated QR Code" class="mx-auto" style="max-width: 300px;">
+      </div>
+      <div class="space-y-2">
+        <p class="text-sm text-gray-600">QR Type: <span class="font-medium">${result.qr_type}</span></p>
+        <div class="text-xs text-gray-500 break-all bg-gray-50 p-2 rounded">${result.data}</div>
+        ${result.dynamic_url ? `<div class="text-xs text-blue-600 break-all bg-blue-50 p-2 rounded">Dynamic URL: ${result.dynamic_url}</div>` : ''}
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button onclick="downloadQR('${result.qr_code}', '${result.qr_type}')" 
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
+          📥 Download PNG
+        </button>
+        <button onclick="copyToClipboard('${result.data}')" 
+                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+          📋 Copy Data
+        </button>
+      </div>
+    </div>
+  `;
+  previewSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+function downloadQR(base64Data, qrType) {
+  const link = document.createElement('a');
+  link.href = 'data:image/png;base64,' + base64Data;
+  link.download = `qr-code-${qrType}-${Date.now()}.png`;
+  link.click();
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(function() {
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = '✅ Copied!';
+    
+    setTimeout(function() {
+      button.textContent = originalText;
+    }, 2000);
+  });
+}
+</script>
+{% endblock %}

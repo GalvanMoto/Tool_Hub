@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+
+{% block title %}Image Resizer - Resize Images Online - ToolHub{% endblock %}
+
+{% block content %}
+<section class="py-12 px-6 max-w-6xl mx-auto">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold mb-4 text-indigo-600">Image Resizer</h1>
+    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+      Resize images to any dimension while maintaining quality. Support for JPEG, PNG, WebP, and more formats.
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-8">
+    <!-- Left Panel: Upload & Settings -->
+    <div class="space-y-6">
+      <!-- Image Upload -->
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Upload Image</h2>
+        <form id="imageForm" action="{{ url_for('tools.image_resizer_process') }}" method="post" enctype="multipart/form-data">
+          <div class="mb-6">
+            <div class="flex items-center justify-center w-full">
+              <label for="image_upload" class="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                <div id="upload-prompt" class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                  </svg>
+                  <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                  <p class="text-xs text-gray-500">JPEG, PNG, WebP, BMP, TIFF (Max 10MB)</p>
+                </div>
+                <div id="image-preview" class="hidden w-full h-full flex items-center justify-center">
+                  <img id="preview-img" class="max-w-full max-h-full object-contain rounded" alt="Preview">
+                </div>
+                <input id="image_upload" name="image_upload" type="file" class="hidden" 
+                       accept="image/*" required>
+              </label>
+            </div>
+          </div>
+
+          <!-- Image Info Display -->
+          <div id="image-info" class="hidden mb-6 p-4 bg-blue-50 rounded-lg">
+            <h3 class="text-sm font-semibold text-blue-900 mb-2">Image Information:</h3>
+            <div class="grid grid-cols-2 gap-4 text-sm text-blue-800">
+              <div>
+                <span class="font-medium">Dimensions:</span>
+                <span id="info-dimensions">-</span>
+              </div>
+              <div>
+                <span class="font-medium">Format:</span>
+                <span id="info-format">-</span>
+              </div>
+              <div>
+                <span class="font-medium">File Size:</span>
+                <span id="info-size">-</span>
+              </div>
+              <div>
+                <span class="font-medium">Megapixels:</span>
+                <span id="info-megapixels">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resize Method Selection -->
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Resize Method</h3>
+            <div class="space-y-3">
+              <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                <input type="radio" name="resize_method" value="dimensions" class="mr-3" checked>
+                <div>
+                  <div class="font-medium">By Dimensions</div>
+                  <div class="text-sm text-gray-500">Set specific width and height</div>
+                </div>
+              </label>
+              <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                <input type="radio" name="resize_method" value="percentage" class="mr-3">
+                <div>
+                  <div class="font-medium">By Percentage</div>
+                  <div class="text-sm text-gray-500">Scale by percentage (25% - 500%)</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Dimensions Settings -->
+          <div id="dimensions-settings" class="mb-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">New Dimensions</h3>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label for="width" class="block font-medium text-gray-700 mb-2">Width (pixels)</label>
+                <input type="number" id="width" name="width" min="1" max="10000"
+                       placeholder="800"
+                       class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+              </div>
+              <div>
+                <label for="height" class="block font-medium text-gray-700 mb-2">Height (pixels)</label>
+                <input type="number" id="height" name="height" min="1" max="10000"
+                       placeholder="600"
+                       class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+              </div>
+            </div>
+            <label class="flex items-center">
+              <input type="checkbox" id="maintain_aspect" name="maintain_aspect" checked class="mr-2">
+              <span class="text-sm text-gray-700">Maintain aspect ratio</span>
+            </label>
+          </div>
+
+          <!-- Percentage Settings -->
+          <div id="percentage-settings" class="mb-6 hidden">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Scale Percentage</h3>
+            <div class="mb-4">
+              <label for="percentage" class="block font-medium text-gray-700 mb-2">Percentage (%)</label>
+              <input type="range" id="percentage" name="percentage" min="25" max="500" value="100"
+                     class="w-full mb-2" oninput="updatePercentageValue()">
+              <div class="flex justify-between text-sm text-gray-500">
+                <span>25%</span>
+                <span id="percentage-value" class="font-medium text-indigo-600">100%</span>
+                <span>500%</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <button type="button" onclick="setPercentage(25)" class="px-3 py-2 text-sm border rounded hover:bg-gray-50">25%</button>
+              <button type="button" onclick="setPercentage(50)" class="px-3 py-2 text-sm border rounded hover:bg-gray-50">50%</button>
+              <button type="button" onclick="setPercentage(75)" class="px-3 py-2 text-sm border rounded hover:bg-gray-50">75%</button>
+              <button type="button" onclick="setPercentage(200)" class="px-3 py-2 text-sm border rounded hover:bg-gray-50">200%</button>
+            </div>
+          </div>
+
+          <!-- Output Settings -->
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Output Settings</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="output_format" class="block font-medium text-gray-700 mb-2">Format</label>
+                <select id="output_format" name="output_format" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                  <option value="">Keep Original Format</option>
+                  <option value="JPEG">JPEG (.jpg)</option>
+                  <option value="PNG">PNG (.png)</option>
+                  <option value="WEBP">WebP (.webp)</option>
+                  <option value="BMP">BMP (.bmp)</option>
+                  <option value="TIFF">TIFF (.tiff)</option>
+                </select>
+              </div>
+              <div>
+                <label for="quality" class="block font-medium text-gray-700 mb-2">Quality (1-100)</label>
+                <input type="range" id="quality" name="quality" min="1" max="100" value="95"
+                       class="w-full" oninput="updateQualityValue()">
+                <div class="text-center text-sm text-gray-500 mt-1">
+                  <span id="quality-value">95</span>% quality
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resize Preview -->
+          <div id="resize-preview" class="hidden mb-6 p-4 bg-green-50 rounded-lg">
+            <h3 class="text-sm font-semibold text-green-900 mb-2">Resize Preview:</h3>
+            <div class="text-sm text-green-800">
+              <div id="preview-dimensions">New dimensions: -</div>
+              <div id="preview-change">Size change: -</div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="resizeBtn" 
+                  class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors">
+            <span id="resize-btn-text">Resize Image</span>
+            <div id="resize-btn-spinner" class="hidden inline-block ml-2">
+              <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Panel: Features & Tips -->
+    <div class="space-y-6">
+      <!-- Features -->
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Features</h2>
+        <div class="space-y-4">
+          <div class="flex items-start">
+            <div class="text-2xl mr-3">🎯</div>
+            <div>
+              <h3 class="font-medium text-gray-900">Precise Control</h3>
+              <p class="text-sm text-gray-600">Set exact dimensions or scale by percentage</p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div class="text-2xl mr-3">🔄</div>
+            <div>
+              <h3 class="font-medium text-gray-900">Aspect Ratio</h3>
+              <p class="text-sm text-gray-600">Maintain proportions or stretch to fit</p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div class="text-2xl mr-3">⚡</div>
+            <div>
+              <h3 class="font-medium text-gray-900">High Quality</h3>
+              <p class="text-sm text-gray-600">Advanced algorithms preserve image quality</p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div class="text-2xl mr-3">📁</div>
+            <div>
+              <h3 class="font-medium text-gray-900">Multiple Formats</h3>
+              <p class="text-sm text-gray-600">Convert between JPEG, PNG, WebP, and more</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common Presets -->
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Quick Presets</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <button type="button" onclick="setDimensions(1920, 1080)" class="p-3 text-sm border rounded-lg hover:bg-gray-50 text-left">
+            <div class="font-medium">Full HD</div>
+            <div class="text-gray-500">1920 × 1080</div>
+          </button>
+          <button type="button" onclick="setDimensions(1280, 720)" class="p-3 text-sm border rounded-lg hover:bg-gray-50 text-left">
+            <div class="font-medium">HD</div>
+            <div class="text-gray-500">1280 × 720</div>
+          </button>
+          <button type="button" onclick="setDimensions(800, 600)" class="p-3 text-sm border rounded-lg hover:bg-gray-50 text-left">
+            <div class="font-medium">SVGA</div>
+            <div class="text-gray-500">800 × 600</div>
+          </button>
+          <button type="button" onclick="setDimensions(400, 400)" class="p-3 text-sm border rounded-lg hover:bg-gray-50 text-left">
+            <div class="font-medium">Square</div>
+            <div class="text-gray-500">400 × 400</div>
+          </button>
+          <button type="button" onclick="setDimensions(1200, 630)" class="p-3 text-sm border rounded-lg hover:bg-gray-50 text-left">
+            <div class="font-medium">Social</div>
+            <div class="text-gray-500">1200 × 630</div>
+          </button>
+          <button type="button" onclick="setDimensions(500, 500)" class="p-3 text-sm border rounded-lg hover:bg-gray-50 text-left">
+            <div class="font-medium">Thumbnail</div>
+            <div class="text-gray-500">500 × 500</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-yellow-900 mb-3">💡 Pro Tips</h3>
+        <ul class="space-y-2 text-yellow-800 text-sm">
+          <li>• Use WebP format for smallest file sizes with great quality</li>
+          <li>• Keep aspect ratio enabled to avoid distortion</li>
+          <li>• Higher quality settings mean larger file sizes</li>
+          <li>• For web use, 72-85% quality is usually sufficient</li>
+          <li>• PNG is best for images with transparency</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+let originalImageData = null;
+
+// File upload handling
+document.getElementById('image_upload').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = document.getElementById('preview-img');
+      img.src = e.target.result;
+      document.getElementById('upload-prompt').classList.add('hidden');
+      document.getElementById('image-preview').classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+    
+    // Get image info (simulated - in real app this would come from server)
+    const img = new Image();
+    img.onload = function() {
+      originalImageData = {
+        width: img.width,
+        height: img.height,
+        format: file.type.split('/')[1].toUpperCase(),
+        size: file.size
+      };
+      
+      // Update info display
+      document.getElementById('info-dimensions').textContent = `${img.width} × ${img.height}`;
+      document.getElementById('info-format').textContent = originalImageData.format;
+      document.getElementById('info-size').textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+      document.getElementById('info-megapixels').textContent = `${((img.width * img.height) / 1000000).toFixed(1)} MP`;
+      document.getElementById('image-info').classList.remove('hidden');
+      
+      // Enable form
+      document.getElementById('resizeBtn').disabled = false;
+      
+      // Set default dimensions
+      document.getElementById('width').value = img.width;
+      document.getElementById('height').value = img.height;
+      
+      updatePreview();
+    };
+    img.src = URL.createObjectURL(file);
+  }
+});
+
+// Resize method toggle
+document.querySelectorAll('input[name="resize_method"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const dimensionsSettings = document.getElementById('dimensions-settings');
+    const percentageSettings = document.getElementById('percentage-settings');
+    
+    if (this.value === 'dimensions') {
+      dimensionsSettings.classList.remove('hidden');
+      percentageSettings.classList.add('hidden');
+    } else {
+      dimensionsSettings.classList.add('hidden');
+      percentageSettings.classList.remove('hidden');
+    }
+    updatePreview();
+  });
+});
+
+// Dimension input changes
+document.getElementById('width').addEventListener('input', function() {
+  if (document.getElementById('maintain_aspect').checked && originalImageData) {
+    const aspectRatio = originalImageData.width / originalImageData.height;
+    const newHeight = Math.round(this.value / aspectRatio);
+    document.getElementById('height').value = newHeight;
+  }
+  updatePreview();
+});
+
+document.getElementById('height').addEventListener('input', function() {
+  if (document.getElementById('maintain_aspect').checked && originalImageData) {
+    const aspectRatio = originalImageData.width / originalImageData.height;
+    const newWidth = Math.round(this.value * aspectRatio);
+    document.getElementById('width').value = newWidth;
+  }
+  updatePreview();
+});
+
+// Percentage and quality sliders
+function updatePercentageValue() {
+  const value = document.getElementById('percentage').value;
+  document.getElementById('percentage-value').textContent = value + '%';
+  updatePreview();
+}
+
+function updateQualityValue() {
+  const value = document.getElementById('quality').value;
+  document.getElementById('quality-value').textContent = value;
+}
+
+// Preset functions
+function setPercentage(percent) {
+  document.getElementById('percentage').value = percent;
+  updatePercentageValue();
+}
+
+function setDimensions(width, height) {
+  document.querySelector('input[name="resize_method"][value="dimensions"]').checked = true;
+  document.getElementById('dimensions-settings').classList.remove('hidden');
+  document.getElementById('percentage-settings').classList.add('hidden');
+  document.getElementById('width').value = width;
+  document.getElementById('height').value = height;
+  updatePreview();
+}
+
+// Preview update
+function updatePreview() {
+  if (!originalImageData) return;
+  
+  const method = document.querySelector('input[name="resize_method"]:checked').value;
+  let newWidth, newHeight;
+  
+  if (method === 'percentage') {
+    const percent = document.getElementById('percentage').value / 100;
+    newWidth = Math.round(originalImageData.width * percent);
+    newHeight = Math.round(originalImageData.height * percent);
+  } else {
+    newWidth = parseInt(document.getElementById('width').value) || originalImageData.width;
+    newHeight = parseInt(document.getElementById('height').value) || originalImageData.height;
+  }
+  
+  const sizeChange = (newWidth * newHeight) / (originalImageData.width * originalImageData.height);
+  const percentChange = Math.round(sizeChange * 100);
+  
+  document.getElementById('preview-dimensions').textContent = `New dimensions: ${newWidth} × ${newHeight}`;
+  document.getElementById('preview-change').textContent = `Size change: ${percentChange}% ${sizeChange > 1 ? '(larger)' : sizeChange < 1 ? '(smaller)' : '(same)'}`;
+  document.getElementById('resize-preview').classList.remove('hidden');
+}
+
+// Form submission
+document.getElementById('imageForm').addEventListener('submit', function(e) {
+  const resizeBtn = document.getElementById('resizeBtn');
+  const btnText = document.getElementById('resize-btn-text');
+  const btnSpinner = document.getElementById('resize-btn-spinner');
+  
+  btnText.textContent = 'Processing...';
+  btnSpinner.classList.remove('hidden');
+  resizeBtn.disabled = true;
+});
+
+// Initialize
+document.getElementById('resizeBtn').disabled = true;
+updatePercentageValue();
+updateQualityValue();
+</script>
+{% endblock %}
